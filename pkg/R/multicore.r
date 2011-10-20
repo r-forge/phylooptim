@@ -1,6 +1,3 @@
-#p <- parallel(1:10)
-#q <- parallel(1:20)
-#collect(list(p, q))
 
 begin.time <- proc.time()
 
