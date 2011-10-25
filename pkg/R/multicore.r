@@ -302,78 +302,78 @@ spgw <- na.omit(spgw)
 
 png(file="bobyqa.png")
 plot(bobyqac[,2],bobyqac[,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='upper',ylab='lower',main="bobyqa",cex=.5)
+xlab='upper',ylab='lower',main=paste("Strt",round(s,3),"bobyqa crit. val. & changing delta bounds"),cex=.5)
 points(bobyqaw[,2],bobyqaw[,1],pch=2,col="red")
 dev.off()
 
 png(file="bobyqa_contour.png")
 filled.contour(U, L, t(bobyqa), color = terrain.colors,
-    plot.title = title(main = "bobyqa critial values w/ changing delta bounds",
+    plot.title = title(main=paste("Strt",round(s,3),"bobyqa crit. val. & changing delta bounds"),
     xlab = "upper", ylab = "lower"),
 )
 dev.off()
 
 png(file="L-BFGS-B.png")
 plot(bfgsc[,2],bfgsc[,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='upper',ylab='lower',main="L-BFGS-B",cex=.5)
+xlab='upper',ylab='lower',main=paste("Strt",round(s,3),"L_BFGS-B crit. val. & changing delta bounds"),cex=.5)
 points(bfgsw[,2],bfgsw[,1],pch=2,col="red")
 dev.off()
 
 png(file="bfgs_contour.png")
 filled.contour(U, L, t(bfgs), color = terrain.colors,
-    plot.title = title(main = "bfgs critial values w/ changing delta bounds",
+    plot.title = title(main = paste("Strt",round(s,3),"L-BFGS-B crit. val. & changing delta bounds"),
     xlab = "upper", ylab = "lower"),
 )
 dev.off()
 
 png(file="nlminb.png")
 plot(nlminbc[,2],nlminbc[,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='upper',ylab='lower',main="nlminb",cex=.5)
+xlab='upper',ylab='lower',main=paste("Strt",round(s,3),"nlminb crit. val. & changing delta bounds"),cex=.5)
 points(nlminbw[,2],nlminbw[,1],pch=2,col="red")
 dev.off()
 
 png(file="nlminb_contour.png")
 filled.contour(U, L, t(nlminb), color = terrain.colors,
-    plot.title = title(main = "nlminb critial values w/ changing delta bounds",
+    plot.title = title(main = paste("Strt",round(s,3),"nlminb crit. val. & changing delta bounds"),
     xlab = "upper", ylab = "lower"),
 )
 dev.off()
 
 png(file="rcgmin.png")
 plot(rcgminc[,2],rcgminc[,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='upper',ylab='lower',main="rcgmin",cex=.5)
+xlab='upper',ylab='lower',main=paste("Strt",round(s,3),"rcgmin crit. val. & changing delta bounds"),cex=.5)
 points(rcgminw[,2],rcgminw[,1],pch=2,col="red")
 dev.off()
 
 png(file="rcgmin_contour.png")
 filled.contour(U, L, t(rcgmin), color = terrain.colors,
-    plot.title = title(main = "rcgmin critial values w/ changing delta bounds",
+    plot.title = title(main = paste("Strt",round(s,3),"rcgmin crit. val. & changing delta bounds"),
     xlab = "upper", ylab = "lower"),
 )
 dev.off()
 
 png(file="rvmmin.png")
 plot(rvmminc[,2],rvmminc[,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='upper',ylab='lower',main="rvmmin",cex=.5)
+xlab='upper',ylab='lower',main=paste("Strt",round(s,3),"rvmmin crit. val. & changing delta bounds"),cex=.5)
 points(rvmminw[,2],rvmminw[,1],pch=2,col="red")
 dev.off()
 
 png(file="rvmmin_contour.png")
 filled.contour(U, L, t(rvmmin), color = terrain.colors,
-    plot.title = title(main = "rvmmin critial values w/ changing delta bounds",
+    plot.title = title(main = paste("Strt",round(s,3),"rvmmin crit. val. & changing delta bounds"),
     xlab = "upper", ylab = "lower"),
 )
 dev.off()
 
 png(file="spg.png")
 plot(spgc[,2],spgc[,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='upper',ylab='lower',main="spg",cex=.5)
+xlab='upper',ylab='lower',main=paste("Strt",round(s,3),"spg crit. val. & changing delta bounds"),cex=.5)
 points(spgw[,2],spgw[,1],pch=2,col="red")
 dev.off()
 
 png(file="spg_contour.png")
 filled.contour(U, L, t(spg), color = terrain.colors,
-    plot.title = title(main = "spg critial values w/ changing delta bounds",
+    plot.title = title(main = paste("Strt",round(s,3),"spg crit. val. & changing delta bounds"),
     xlab = "upper", ylab = "lower"),
 )
 dev.off()
