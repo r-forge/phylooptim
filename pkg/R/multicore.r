@@ -21,7 +21,6 @@ detectCores <- function(all.tests = FALSE)
     NA_integer_
 }
 N <- detectCores()
-N <-4
 #Precision?
 p <- 11
 #Lower lower bound
