@@ -21,8 +21,9 @@ detectCores <- function(all.tests = FALSE)
     NA_integer_
 }
 N <- detectCores()
+N <-4
 #Precision?
-p <- 50
+p <- 11
 #Lower lower bound
 llb <- .0002
 #upper lower bound
@@ -40,15 +41,25 @@ s <- .375825
     M <- c(lub,rep(NA,N))
     for (i in c(2:(N+1))){M[i]<-M[i-1]+MM}
     LOW<-c(lub,rep(NA,N*2-2),uub)
+
     j<-2
     for (m in c(2:N)){
-    for (i in c(1:p)){if ((U[i]< M[m]) && (M[m] < U[i+1])){LOW[j]<-U[i];LOW[j+1]<-U[i+1]}}
+    for (i in c(1:p)){if ((U[i]<= M[m]) && (M[m] <= U[i+1])){LOW[j]<-U[i];LOW[j+1]<-U[i+1]}}
     j<-j+2}
 
-    mm <- p/N
-    nn <- floor(mm)+1
-    ll <- floor(mm)
-    if ((mm-ll)<0){rr <- (mm-ll)*N; ww <- c(rep(hh,rr),rep(ll,N-rr))} else {ww<-rep(mm,N)}
+    buk <- vector("list", N)
+    a<-1
+    for(j in seq(1,length(LOW),by=2)){
+    k<-.5*j+.5
+    i<-a
+    while(U[i] <= LOW[j+1] && U[i] >= LOW[j]){
+      buk[[k]][i]<-U[i];
+      i<-i+1;a<-i;if (a>p){break}}  
+    }
+    for (i in c(1:N)){buk[[i]]<-na.omit(buk[[i]])}
+    ww <- rep(NA,N)
+    for (i in c(1:N)){ww[i]<-length(buk[[i]])}
+
     j<-1
     k <- vector("list",N)
     for(i in c(1:N))
