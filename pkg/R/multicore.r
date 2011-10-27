@@ -22,7 +22,7 @@ detectCores <- function(all.tests = FALSE)
 }
 N <- detectCores()
 #Precision?
-p <- 11
+p <- 5
 #Lower lower bound
 llb <- .0002
 #upper lower bound
@@ -32,7 +32,7 @@ lub <- 400
 #upper upper bound
 uub <- 900
 #start value
-s <- .375825
+s <- .001
 
     U <- seq(lub,uub,length.out=p)
     L <- seq(llb,ulb,length.out=p)
@@ -74,7 +74,7 @@ attach(geospiza)
 meserr=0 #Measurement error
 userstart=NULL #Starting position
 badLnL=1000 #Value returned when the function to optimize is undefined
-precision=10 #Number of points per variable to compute
+precision=p #Number of points per variable to compute
 
 td<-treedata(geospiza.tree,geospiza.data[,1],sort=T)
 ntax=length(td$phy$tip.label)
@@ -137,9 +137,9 @@ w <- x[5] # - precision for width
 
 p <- x[6] # - precision
 s <- x[7] # - start
-beta.start<-var(chdata)/max(branching.times(tree))
+#beta.start<-3 #var(chdata)/max(branching.times(tree))
 #beta.start <- b[j]
-start=log(c(beta.start, s))
+start=log(c(s, s))
 
 if(!is.null(userstart)) {
 	start<-log(userstart)
@@ -278,7 +278,7 @@ rcgmin[i,j] <- data[,2][4]
 if (data[,1][5]=="1"){rvmminc[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}else{rvmminw[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}
 rvmmin[i,j] <- data[,2][5]
 if (data[,1][6]=="1"){spgc[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}else{spgw[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}
-spg[i,j] <- data[,2][6]}else{b<-rep(0,N+1);for (a in c(1:2)){b[a+1]<-ww[a]+b[a]};
+spg[i,j] <- data[,2][6]}else{b<-rep(0,N+1);for (a in c(1:N)){b[a+1]<-ww[a]+b[a]};
 if (data[,1][1]=="1"){bobyqac[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}else{bobyqaw[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}
 bobyqa[i,j+b[h]] <- data[,2][1]
 if (data[,1][2]=="1"){bfgsc[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}else{bfgsw[m,] <- c(as.numeric(names(results[[h]][[i]][[j]])[1]),as.numeric(names(results[[h]][[i]][[j]])[2]))}
