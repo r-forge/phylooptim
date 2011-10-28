@@ -473,74 +473,80 @@ filled.contour(U, L, t(spg[[v]]), color = terrain.colors,
 dev.off()
 }
 
+pp <- p/16
+fpp <- floor(pp)
+tt <- c(rep(16,fpp),(pp-fpp)*16)
+cpp <- ceiling(pp)
+b<-rep(0,cpp+1);for (a in c(1:cpp)){b[a+1]<-tt[a]+b[a]};
 if (p<=4){k<-2}else{if (p<=9){k<-3}else{k<-4}}
 
-png(file="bobyqa.png")
+for (l in c(1:cpp)){
+png(file=paste("bobyqa",S[v+b[l]],".png"))
 par(mfrow=c(k,k))
 for (v in c(1:length(S)))
   {
-plot(bobyqac[[v]][,2],bobyqac[[v]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='',ylab='',main=paste("Start",round(S[v],3)),cex=.5)
-points(bobyqaw[[v]][,2],bobyqaw[[v]][,1],pch=2,col="red")
+plot(bobyqac[[v+b[l]]][,2],bobyqac[[v+b[l]]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
+xlab='',ylab='',main=paste("Start",round(S[v+b[l]],3)),cex=.5)
+points(bobyqaw[[v+b[l]]][,2],bobyqaw[[v+b[l]]][,1],pch=2,col="red")
 }
 mtext("bobyqa",at= 250, line = 22,cex=3)
 dev.off()
 
-png(file="bfgs.png")
+png(file==paste("bfgs",S[v+b[l]],".png"))
 par(mfrow=c(k,k))
 for (v in c(1:length(S)))
   {
-plot(bfgsc[[v]][,2],bfgsc[[v]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='',ylab='',main=paste("Start",round(S[v],3)),cex=.5)
-points(bfgsw[[v]][,2],bfgsw[[v]][,1],pch=2,col="red")
+plot(bfgsc[[v+b[l]]][,2],bfgsc[[v+b[l]]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
+xlab='',ylab='',main=paste("Start",round(S[v+b[l]],3)),cex=.5)
+points(bfgsw[[v+b[l]]][,2],bfgsw[[v+b[l]]][,1],pch=2,col="red")
 }
 mtext("bfgs",at= 250, line = 22,cex=3)
 dev.off()
 
-png(file="nlminb.png")
+png(file=paste("nlminb",S[v+b[l]],".png"))
 par(mfrow=c(k,k))
 for (v in c(1:length(S)))
   {
-plot(nlminbc[[v]][,2],nlminbc[[v]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='',ylab='',main=paste("Start",round(S[v],3)),cex=.5)
-points(nlminbw[[v]][,2],nlminbw[[v]][,1],pch=2,col="red")
+plot(nlminbc[[v+b[l]]][,2],nlminbc[[v+b[l]]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
+xlab='',ylab='',main=paste("Start",round(S[v+b[l]],3)),cex=.5)
+points(nlminbw[[v+b[l]]][,2],nlminbw[[v+b[l]]][,1],pch=2,col="red")
 }
 mtext("nlminb",at= 250, line = 22,cex=3)
 dev.off()
 
-png(file="rcgmin.png")
+png(file=paste("rcgmin",S[v+b[l]],".png"))
 par(mfrow=c(k,k))
 for (v in c(1:length(S)))
   {
-plot(rcgminc[[v]][,2],rcgminc[[v]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='',ylab='',main=paste("Start",round(S[v],3)),cex=.5)
-points(rcgminw[[v]][,2],rcgminw[[v]][,1],pch=2,col="red")
+plot(rcgminc[[v+b[l]]][,2],rcgminc[[v+b[l]]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
+xlab='',ylab='',main=paste("Start",round(S[v+b[l]],3)),cex=.5)
+points(rcgminw[[v+b[l]]][,2],rcgminw[[v+b[l]]][,1],pch=2,col="red")
 }
 mtext("rcgmin",at= 250, line = 22,cex=3)
 dev.off()
 
-png(file="rvmmin.png")
+png(file=paste("rvmmin",S[v+b[l]],".png"))
 par(mfrow=c(k,k))
 for (v in c(1:length(S)))
   {
-plot(rvmminc[[v]][,2],rvmminc[[v]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='',ylab='',main=paste("Start",round(S[v],3)),cex=.5)
-points(rvmminw[[v]][,2],rvmminw[[v]][,1],pch=2,col="red")
+plot(rvmminc[[v+b[l]]][,2],rvmminc[[v+b[l]]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
+xlab='',ylab='',main=paste("Start",round(S[v+b[l]],3)),cex=.5)
+points(rvmminw[[v+b[l]]][,2],rvmminw[[v+b[l]]][,1],pch=2,col="red")
 }
 mtext("rvmmin",at= 250, line = 22,cex=3)
 dev.off()
 
-png(file="spg.png")
+png(file=paste("spg",S[v+b[l]],".png"))
 par(mfrow=c(k,k))
 for (v in c(1:length(S)))
   {
-plot(spgc[[v]][,2],spgc[[v]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
-xlab='',ylab='',main=paste("Start",round(S[v],3)),cex=.5)
-points(spgw[[v]][,2],spgw[[v]][,1],pch=2,col="red")
+plot(spgc[[v+b[l]]][,2],spgc[[v+b[l]]][,1],type="p",xlim=c(min(U),max(U)),ylim=c(min(L),max(L)),
+xlab='',ylab='',main=paste("Start",round(S[v+b[l]],3)),cex=.5)
+points(spgw[[v+b[l]]][,2],spgw[[v+b[l]]][,1],pch=2,col="red")
 }
 mtext("spg",at= 250, line = 22,cex=3)
 dev.off()
-
+}
 source("http://wiki.cbr.washington.edu/qerm/sites/qerm/images/1/16/Filled.contour3.R")
 source("http://wiki.cbr.washington.edu/qerm/sites/qerm/images/2/25/Filled.legend.R")
 
@@ -594,62 +600,64 @@ bw<-bw.pal(round(numcol*sum(k<=0)/length(k)))
 cols<-c(bw,wr)
 rcols<-cols[round((1:(length(levels)))*length(cols)/length(levels))]
 
-png(file="bobyqa_contour.png")
+for (l in c(1:cpp)){
+png(file=paste("bobyqa_contour",S[v+b[l]],".png"))
 plot.new()
 for (v in c(1:length(S))){
 par(new = "TRUE",plt = d[[v]],las = 1,cex.axis = 1)
-filled.contour3(U, L, t(spg[[v]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
+filled.contour3(U, L, t(bobyqa[[v+b[l]]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
 }
 par(new = "TRUE",plt = d[[length(d)]],las = 1,cex.axis = 1)
 filled.legend(U,L,spg[[1]],col = rcols,xlab = "",ylab = "",xlim = c(min(xintercepts),max(xintercepts)),ylim = c(min(slopes),max(slopes)),zlim = range(spg,na.rm=TRUE))
 dev.off()
 
-png(file="bfgs_contour.png")
+png(file=paste("bfgs_contour",S[v+b[l]],".png"))
 plot.new()
 for (v in c(1:length(S))){
 par(new = "TRUE",plt = d[[v]],las = 1,cex.axis = 1)
-filled.contour3(U, L, t(bfgs[[v]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
+filled.contour3(U, L, t(bfgs[[v+b[l]]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
 }
 par(new = "TRUE",plt = d[[length(d)]],las = 1,cex.axis = 1)
 filled.legend(U,L,bfgs[[1]],col = rcols,xlab = "",ylab = "",xlim = c(min(xintercepts),max(xintercepts)),ylim = c(min(slopes),max(slopes)),zlim = range(spg,na.rm=TRUE))
 dev.off()
 
-png(file="nlminb_contour.png")
+png(file=paste("nlminb_contour",S[v+b[l]],".png"))
 plot.new()
 for (v in c(1:length(S))){
 par(new = "TRUE",plt = d[[v]],las = 1,cex.axis = 1)
-filled.contour3(U, L, t(nlminb[[v]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
+filled.contour3(U, L, t(nlminb[[v+b[l]]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
 }
 par(new = "TRUE",plt = d[[length(d)]],las = 1,cex.axis = 1)
 filled.legend(U,L,nlminb[[1]],col = rcols,xlab = "",ylab = "",xlim = c(min(xintercepts),max(xintercepts)),ylim = c(min(slopes),max(slopes)),zlim = range(spg,na.rm=TRUE))
 dev.off()
 
-png(file="rcgmin_contour.png")
+png(file=paste("rcgmin_contour",S[v+b[l]],".png"))
 plot.new()
 for (v in c(1:length(S))){
 par(new = "TRUE",plt = d[[v]],las = 1,cex.axis = 1)
-filled.contour3(U, L, t(rcgmin[[v]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
+filled.contour3(U, L, t(rcgmin[[v+b[l]]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
 }
 par(new = "TRUE",plt = d[[length(d)]],las = 1,cex.axis = 1)
 filled.legend(U,L,rcgmin[[1]],col = rcols,xlab = "",ylab = "",xlim = c(min(xintercepts),max(xintercepts)),ylim = c(min(slopes),max(slopes)),zlim = range(spg,na.rm=TRUE))
 dev.off()
 
-png(file="rvmmin_contour.png")
+png(file=paste("rvmmin_contour",S[v+b[l]],".png"))
 plot.new()
 for (v in c(1:length(S))){
 par(new = "TRUE",plt = d[[v]],las = 1,cex.axis = 1)
-filled.contour3(U, L, t(rvmmin[[v]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
+filled.contour3(U, L, t(rvmmin[[v+b[l]]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
 }
 par(new = "TRUE",plt = d[[length(d)]],las = 1,cex.axis = 1)
 filled.legend(U,L,rvmmin[[1]],col = rcols,xlab = "",ylab = "",xlim = c(min(xintercepts),max(xintercepts)),ylim = c(min(slopes),max(slopes)),zlim = range(spg,na.rm=TRUE))
 dev.off()
 
-png(file="spg_contour.png")
+png(file=paste("spg_contour",S[v+b[l]],".png"))
 plot.new()
 for (v in c(1:length(S))){
 par(new = "TRUE",plt = d[[v]],las = 1,cex.axis = 1)
-filled.contour3(U, L, t(spg[[v]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
+filled.contour3(U, L, t(spg[[v+b[l]]]),col=rcols,xlab = "",ylab = "",xlim = c(min(U),max(U)),ylim = c(min(L),max(L)),zlim = range(spg,na.rm=TRUE))
 }
 par(new = "TRUE",plt = d[[length(d)]],las = 1,cex.axis = 1)
 filled.legend(U,L,spg[[1]],col = rcols,xlab = "",ylab = "",xlim = c(min(xintercepts),max(xintercepts)),ylim = c(min(slopes),max(slopes)),zlim = range(spg,na.rm=TRUE))
 dev.off()
+}
