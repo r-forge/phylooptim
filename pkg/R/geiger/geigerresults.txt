@@ -1,7 +1,7 @@
 #Returns a data frame with the initial values (I),
 #Log likelihoods (L), beta (B), and delta (D)
 
-#Total time to run about 3 minutes (w/ 50 points)
+#Total time to run about 10 minutes (w/ 50 points)
 
 $spg
            I        L          B        D
