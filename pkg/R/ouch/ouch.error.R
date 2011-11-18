@@ -145,7 +145,12 @@ hansen <- function (data, tree, regimes, sqrt.alpha, sigma,
       }
     } else {
 
-	out <- optimx(
+well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+out <- vector("list", length(well))
+names(out)<-well
+
+  for (i in c(1:length(out))){
+	out[[i]] <- optimx(
                       fn = function (par) {
                      ou.lik.fn(
                                tree=tree,
@@ -157,10 +162,9 @@ hansen <- function (data, tree, regimes, sqrt.alpha, sigma,
                    }, 
                       p=c(sqrt.alpha,sigma),
                       lower = rep(0.001,(nalpha+nsigma)), upper = rep(1e50,(nalpha+nsigma)),
-                      control=list(all.methods=TRUE, trace=0)
+                      method=well[i]
                       )
-
-        out<-out[sort.list(unlist(out[,3])), ]
+}
 
       	opt <- optim(
                    par=c(sqrt.alpha,sigma),
@@ -187,13 +191,13 @@ hansen <- function (data, tree, regimes, sqrt.alpha, sigma,
       }
     }
   }
-  obj.list <- vector("list", 6)
-  names(obj.list) <- c("bobyqa","bfgs","nlminb","rcgmin","rvmmin","spg")
-  for (i in c(1:6)){
+  obj.list <- vector("list", length(out))
+  names(obj.list) <- well
+  for (i in c(1:length(obj.list))){
 
-    sqrt.alpha <- unlist(out[[1]][[i]])[seq(nalpha)]
+    sqrt.alpha <- unlist(out[[i]]$par)[seq(nalpha)]
 #   sqrt.alpha <- opt$par[seq(nalpha)]
-    sigma <- unlist(out[[1]][[i]])[nalpha+seq(nsigma)]
+    sigma <- unlist(out[[i]]$par)[nalpha+seq(nsigma)]
 #   sigma <- opt$par[nalpha+seq(nsigma)]
     optim.diagn <- list(convergence=opt$convergence,message=opt$message)
 
@@ -440,17 +444,18 @@ summary(h1)
 
 #Number of starting points
 m<- 50
-j<-seq(from=.001, to=1, length.out=m)
-optimx <- vector("list",6)
-names(optimx) <- c("bobyqa","bfgs","nlminb","rcgmin","rvmmin","spg")
+j<-seq(from=.001, to=4, length.out=m)
+well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+optimx <- vector("list", length(well))
+names(optimx)<-well
 
 for (i in c(1:length(optimx))){
       optimx[[i]]<-vector("list",m)
       names(optimx[[i]]) <- j
 }
 
-lt <- vector("list",6)
-names(lt) <- c("bobyqa","bfgs","nlminb","rcgmin","rvmmin","spg")
+lt <- vector("list",length(optimx))
+names(lt) <- well
 
 hansen.run<-function(){
         k<-matrix(j,1,m)
@@ -463,12 +468,18 @@ hansen.run<-function(){
                  sigma=c(x)
                 )}))
             for (i in c(1:m)){
-                optimx[[1]][[i]] <- k[2,][[i]]$bobyqa
-                optimx[[2]][[i]] <- k[2,][[i]]$bfgs
-                optimx[[3]][[i]] <- k[2,][[i]]$nlminb
-                optimx[[4]][[i]] <- k[2,][[i]]$rcgmin
-                optimx[[5]][[i]] <- k[2,][[i]]$rvmmin
-                optimx[[6]][[i]] <- k[2,][[i]]$spg}
+                optimx[[1]][[i]] <- k[2,][[i]]$spg
+                optimx[[2]][[i]] <- k[2,][[i]]$ucminf
+                optimx[[3]][[i]] <- k[2,][[i]]$nlm
+                optimx[[4]][[i]] <- k[2,][[i]]$nlminb
+                optimx[[5]][[i]] <- k[2,][[i]]$bobyqa
+                optimx[[6]][[i]] <- k[2,][[i]]$rvmmin
+                optimx[[7]][[i]] <- k[2,][[i]]$rcgmin
+                optimx[[8]][[i]] <- k[2,][[i]]$'Nelder-Mead'
+                optimx[[9]][[i]] <- k[2,][[i]]$'quasi-Newton'
+                optimx[[10]][[i]] <- k[2,][[i]]$BFGS
+                optimx[[11]][[i]] <- k[2,][[i]]$CG
+                optimx[[12]][[i]] <- k[2,][[i]]$'L-BFGS-B'}
             for(j in c(1:length(optimx))){
                 lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),4,ncol(k))))))
 	        colnames(lt[[j]])<-c("I","T","L","S","A")}
