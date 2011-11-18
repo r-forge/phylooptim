@@ -37,9 +37,12 @@ ace <- function(x, phy, type = "continuous", method = "ML", CI = TRUE,
           x <- x[phy$tip.label]
         else warning("the names of 'x' and the tip labels of the tree do not match: the former were ignored in the analysis.")
     }
-  obj.list <- vector("list", 6)
-  names(obj.list) <- c("bobyqa","bfgs","nlminb","rcgmin","rvmmin","spg")
-  for (i in c(1:6)){
+
+well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+obj.list <- vector("list", length(well))
+names(obj.list)<-well
+    
+  for (i in c(1:length(well))){
     obj <- list()
     if (kappa != 1) phy$edge.length <- phy$edge.length^kappa
     if (type == "continuous") {
@@ -228,11 +231,10 @@ ace <- function(x, phy, type = "continuous", method = "ML", CI = TRUE,
 
         out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
                       lower = rep(0, np), upper = rep(1e50, np),
-                      control=list(all.methods=TRUE, trace=0))
-
-        out<-out[sort.list(unlist(out[,3])), ]
-        obj$loglik <- -out[,2][[i]]/2
-        obj$rates <- out[,1][[i]]
+                      method=well[i])
+        
+        obj$loglik <- -out$fvalues$fvalues/2
+        obj$rates <- out$par$par
         oldwarn <- options("warn")
         options(warn = -1)
 
@@ -323,37 +325,46 @@ attach(geospiza)
 phy<-drop.tip(geospiza.tree,"olivacea")
 dv<-as.factor(geospiza.data[,1]>4.2)
 names(dv)<-rownames(geospiza.data)
+#ace(dv,phy,type='discrete',ip=3)
 
 #Number of starting points
 m<- 50
 j<-seq(from=1/100, to=10, length.out=m)
-optimx <- vector("list",6)
-names(optimx) <- c("bobyqa","bfgs","nlminb","rcgmin","rvmmin","spg")
+well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+optimx <- vector("list", length(well))
+names(optimx)<-well
 
 for (i in c(1:length(optimx))){
       optimx[[i]]<-vector("list",m)
-      names(optimx[[i]]) <- seq(from=1/100, to=10, length.out=3)
+      names(optimx[[i]]) <- j
 }
 
-lt <- vector("list",6)
-names(lt) <- c("bobyqa","bfgs","nlminb","rcgmin","rvmmin","spg")
+lt <- vector("list",length(optimx))
+names(lt) <- well
 
 ace.run<-function(){
         k<-matrix(j,1,m)
 	k<-rbind(k,apply(k,2,function(x) {ace(dv,phy,type='discrete',ip=x)}))
             for (i in c(1:m)){
-                optimx[[1]][[i]] <- k[2,][[i]]$bobyqa
-                optimx[[2]][[i]] <- k[2,][[i]]$bfgs
-                optimx[[3]][[i]] <- k[2,][[i]]$nlminb
-                optimx[[4]][[i]] <- k[2,][[i]]$rcgmin
-                optimx[[5]][[i]] <- k[2,][[i]]$rvmmin
-                optimx[[6]][[i]] <- k[2,][[i]]$spg}
+                optimx[[1]][[i]] <- k[2,][[i]]$spg
+                optimx[[2]][[i]] <- k[2,][[i]]$ucminf
+                optimx[[3]][[i]] <- k[2,][[i]]$nlm
+                optimx[[4]][[i]] <- k[2,][[i]]$nlminb
+                optimx[[5]][[i]] <- k[2,][[i]]$bobyqa
+                optimx[[6]][[i]] <- k[2,][[i]]$rvmmin
+                optimx[[7]][[i]] <- k[2,][[i]]$rcgmin
+                optimx[[8]][[i]] <- k[2,][[i]]$'Nelder-Mead'
+                optimx[[9]][[i]] <- k[2,][[i]]$'quasi-Newton'
+                optimx[[10]][[i]] <- k[2,][[i]]$BFGS
+                optimx[[11]][[i]] <- k[2,][[i]]$CG
+                optimx[[12]][[i]] <- k[2,][[i]]$'L-BFGS-B'}
             for(j in c(1:length(optimx))){
                 lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$rates,x$loglik,x$se)))),3,ncol(k))))))
 	        colnames(lt[[j]])<-c("I","P","L","S")}
 	return(lt)
       }
         
+
 begin.time <-proc.time()
 l<-ace.run()
 
