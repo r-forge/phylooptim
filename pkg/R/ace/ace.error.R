@@ -38,10 +38,11 @@ ace <- function(x, phy, type = "continuous", method = "ML", CI = TRUE,
         else warning("the names of 'x' and the tip labels of the tree do not match: the former were ignored in the analysis.")
     }
 
-well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa",1,1,1,1,1,1,1,1)
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 obj.list <- vector("list", length(well))
 names(obj.list)<-well
-    
+
   for (i in c(1:length(well))){
     obj <- list()
     if (kappa != 1) phy$edge.length <- phy$edge.length^kappa
@@ -229,10 +230,15 @@ names(obj.list)<-well
             if (is.na(dev)) Inf else dev
         }
 
+if (well[i]==wellt[i]){
+
         out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
                       lower = rep(0, np), upper = rep(1e50, np),
-                      method=well[i])
+                      method=well[i])}else{
         
+        out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
+                      method=well[i])}
+
         obj$loglik <- -out$fvalues$fvalues/2
         obj$rates <- out$par$par
         oldwarn <- options("warn")
@@ -325,12 +331,12 @@ attach(geospiza)
 phy<-drop.tip(geospiza.tree,"olivacea")
 dv<-as.factor(geospiza.data[,1]>4.2)
 names(dv)<-rownames(geospiza.data)
-#ace(dv,phy,type='discrete',ip=3)
+ace(dv,phy,type='discrete',ip=3)
 
 #Number of starting points
 m<- 50
 j<-seq(from=1/100, to=10, length.out=m)
-well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
 names(optimx)<-well
 
@@ -347,17 +353,17 @@ ace.run<-function(){
 	k<-rbind(k,apply(k,2,function(x) {ace(dv,phy,type='discrete',ip=x)}))
             for (i in c(1:m)){
                 optimx[[1]][[i]] <- k[2,][[i]]$spg
-                optimx[[2]][[i]] <- k[2,][[i]]$ucminf
-                optimx[[3]][[i]] <- k[2,][[i]]$nlm
-                optimx[[4]][[i]] <- k[2,][[i]]$nlminb
-                optimx[[5]][[i]] <- k[2,][[i]]$bobyqa
-                optimx[[6]][[i]] <- k[2,][[i]]$rvmmin
-                optimx[[7]][[i]] <- k[2,][[i]]$rcgmin
+                optimx[[2]][[i]] <- k[2,][[i]]$Rcgmin
+                optimx[[3]][[i]] <- k[2,][[i]]$Rvmmin
+                optimx[[4]][[i]] <- k[2,][[i]]$bobyqa
+                optimx[[5]][[i]] <- k[2,][[i]]$'L-BFGS-B'
+                optimx[[6]][[i]] <- k[2,][[i]]$nlminb
+                optimx[[7]][[i]] <- k[2,][[i]]$ucminf
                 optimx[[8]][[i]] <- k[2,][[i]]$'Nelder-Mead'
-                optimx[[9]][[i]] <- k[2,][[i]]$'quasi-Newton'
-                optimx[[10]][[i]] <- k[2,][[i]]$BFGS
-                optimx[[11]][[i]] <- k[2,][[i]]$CG
-                optimx[[12]][[i]] <- k[2,][[i]]$'L-BFGS-B'}
+                optimx[[9]][[i]] <- k[2,][[i]]$nlm
+                optimx[[10]][[i]] <- k[2,][[i]]$CG
+                optimx[[11]][[i]] <- k[2,][[i]]$BFGS
+                optimx[[12]][[i]] <- k[2,][[i]]$newuoa}
             for(j in c(1:length(optimx))){
                 lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$rates,x$loglik,x$se)))),3,ncol(k))))))
 	        colnames(lt[[j]])<-c("I","P","L","S")}
