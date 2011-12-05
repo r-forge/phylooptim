@@ -107,7 +107,8 @@ function(phy, data, data.names=NULL, model=c("BM", "OU", "lambda", "kappa", "del
 function(ds, print=TRUE)
 {
 
-well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa",1,1,1,1,1,1,1,1)
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 obj.list <- vector("list", length(well))
 names(obj.list)<-well
 
@@ -269,9 +270,10 @@ names(obj.list)<-well
 }
                 dplot<-TRUE
                 foostore=list(x1=NULL,x2=NULL)
-
-		o <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])
-
+if (well[i]==wellt[i]){
+		o <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])}else{
+		o <- optimx(foo, p=start,method=well[i])}
+          
 		results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]))
 
 		#o<-optim(foo, p=start, lower=lower, upper=upper, method="L")
@@ -569,7 +571,7 @@ m<-400
 #Start point (less then min bound)
 s<-0.001
 j<-seq(from=m, to=M, length.out=n)
-well<-c("spg","ucminf","nlm","nlminb","bobyqa","rvmmin","rcgmin","Nelder-Mead","quasi-Newton","BFGS","CG","L-BFGS-B")
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
 names(optimx)<-well
 
@@ -591,17 +593,17 @@ fitContinuous.run<-function(){
           }))
         for (i in c(1:n)){
                 optimx[[1]][[i]] <- k[2,][[i]]$Trait1$spg
-                optimx[[2]][[i]] <- k[2,][[i]]$Trait1$ucminf
-                optimx[[3]][[i]] <- k[2,][[i]]$Trait1$nlm
-                optimx[[4]][[i]] <- k[2,][[i]]$Trait1$nlminb
-                optimx[[5]][[i]] <- k[2,][[i]]$Trait1$bobyqa
-                optimx[[6]][[i]] <- k[2,][[i]]$Trait1$rvmmin
-                optimx[[7]][[i]] <- k[2,][[i]]$Trait1$rcgmin
+                optimx[[2]][[i]] <- k[2,][[i]]$Trait1$Rcgmin
+                optimx[[3]][[i]] <- k[2,][[i]]$Trait1$Rvmmin
+                optimx[[4]][[i]] <- k[2,][[i]]$Trait1$bobyqa
+                optimx[[5]][[i]] <- k[2,][[i]]$Trait1$'L-Bfgs-B'
+                optimx[[6]][[i]] <- k[2,][[i]]$Trait1$nlminb
+                optimx[[7]][[i]] <- k[2,][[i]]$Trait1$ucminf
                 optimx[[8]][[i]] <- k[2,][[i]]$Trait1$'Nelder-Mead'
-                optimx[[9]][[i]] <- k[2,][[i]]$Trait1$'quasi-Newton'
-                optimx[[10]][[i]] <- k[2,][[i]]$Trait1$BFGS
-                optimx[[11]][[i]] <- k[2,][[i]]$Trait1$CG
-                optimx[[12]][[i]] <- k[2,][[i]]$Trait1$'L-BFGS-B'}
+                optimx[[9]][[i]] <- k[2,][[i]]$Trait1$nlm
+                optimx[[10]][[i]] <- k[2,][[i]]$Trait1$CG
+                optimx[[11]][[i]] <- k[2,][[i]]$Trait1$BFGS
+                optimx[[12]][[i]] <- k[2,][[i]]$Trait1$newuoa}
             for(j in c(1:length(optimx))){
                 lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),x$beta,x$delta)))),3,ncol(k))))))
 	        colnames(lt[[j]])<-c("I","L","B","D")}
