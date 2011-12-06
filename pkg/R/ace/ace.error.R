@@ -38,7 +38,7 @@ ace <- function(x, phy, type = "continuous", method = "ML", CI = TRUE,
         else warning("the names of 'x' and the tip labels of the tree do not match: the former were ignored in the analysis.")
     }
 
-wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa",1,1,1,1,1,1,1,1)
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 obj.list <- vector("list", length(well))
 names(obj.list)<-well
@@ -234,11 +234,14 @@ if (well[i]==wellt[i]){
 
         out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
                       lower = rep(0, np), upper = rep(1e50, np),
-                      method=well[i])}else{
+                      method=well[i])
+        lb <- 0;ub <- 1e50}else{
         
         out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
                       method=well[i])}
 
+        obj$lb <- lb
+        obj$ub <- ub
         obj$loglik <- -out$fvalues$fvalues/2
         obj$rates <- out$par$par
         oldwarn <- options("warn")
@@ -331,11 +334,12 @@ attach(geospiza)
 phy<-drop.tip(geospiza.tree,"olivacea")
 dv<-as.factor(geospiza.data[,1]>4.2)
 names(dv)<-rownames(geospiza.data)
-ace(dv,phy,type='discrete',ip=3)
+#ace(dv,phy,type='discrete',ip=3)
 
 #Number of starting points
 m<- 50
 j<-seq(from=1/100, to=10, length.out=m)
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
 names(optimx)<-well
@@ -365,8 +369,11 @@ ace.run<-function(){
                 optimx[[11]][[i]] <- k[2,][[i]]$BFGS
                 optimx[[12]][[i]] <- k[2,][[i]]$newuoa}
             for(j in c(1:length(optimx))){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$rates,x$loglik,x$se)))),3,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","P","L","S")}
+              if (well[j]==wellt[j]){
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$lb,x$ub,x$rates,x$loglik,x$se)))),5,ncol(k))))))
+              	colnames(lt[[j]])<-c("I","lb","ub","P","L","S")}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,x$rates,x$loglik,x$se)))),5,ncol(k))))))                  
+	        colnames(lt[[j]])<-c("I","lb","ub","P","L","S")}}
 	return(lt)
       }
         
