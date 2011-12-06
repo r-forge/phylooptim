@@ -107,7 +107,7 @@ function(phy, data, data.names=NULL, model=c("BM", "OU", "lambda", "kappa", "del
 function(ds, print=TRUE)
 {
 
-wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa",1,1,1,1,1,1,1,1)
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 obj.list <- vector("list", length(well))
 names(obj.list)<-well
@@ -272,9 +272,10 @@ names(obj.list)<-well
                 foostore=list(x1=NULL,x2=NULL)
 if (well[i]==wellt[i]){
 		o <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])}else{
+
 		o <- optimx(foo, p=start,method=well[i])}
           
-		results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]))
+		results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]),beta.bnd=c(lower$beta,upper$beta),delta.bnds=c(lower$delta,upper$delta))
 
 		#o<-optim(foo, p=start, lower=lower, upper=upper, method="L")
 		
@@ -559,7 +560,7 @@ chdata<- geospiza.data[,1]# TIP data
 tree<- td$phy# Tree
 n<- length(chdata)
 
-l<-fitContinuous(tree,chdata,model="delta",bounds=list(delta=c(.003,40)))
+#l<-fitContinuous(tree,chdata,model="delta",bounds=list(delta=c(.003,40)))
 
 
 #Number of starting points
@@ -568,9 +569,19 @@ n<-50
 M<-700
 #Min bound
 m<-400
-#Start point (less then min bound)
-s<-0.001
-j<-seq(from=m, to=M, length.out=n)
+#Start Value
+s <- 1.000001e-08
+#Lower Bound delta
+#dLB <- 0.001
+#Upper bound delta
+#dUB <- 
+#Lower bound beta
+#bLB <- 1.000001e-08
+#upper bound beta
+#bUB <- 20
+#jb <- seq(from=dLB, to=bUB, length.out=n)
+j <- seq(from=m, to=M, length.out=n)
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
 names(optimx)<-well
@@ -589,14 +600,14 @@ fitContinuous.run<-function(){
             fitContinuous(tree,
                           chdata,
                           model="delta",
-                          bounds=list(delta=c(s,x)))
+                          bounds=list(delta=c(s,x),beta=c(s,x)))
           }))
         for (i in c(1:n)){
                 optimx[[1]][[i]] <- k[2,][[i]]$Trait1$spg
                 optimx[[2]][[i]] <- k[2,][[i]]$Trait1$Rcgmin
                 optimx[[3]][[i]] <- k[2,][[i]]$Trait1$Rvmmin
                 optimx[[4]][[i]] <- k[2,][[i]]$Trait1$bobyqa
-                optimx[[5]][[i]] <- k[2,][[i]]$Trait1$'L-Bfgs-B'
+                optimx[[5]][[i]] <- k[2,][[i]]$Trait1$'L-BFGS-B'
                 optimx[[6]][[i]] <- k[2,][[i]]$Trait1$nlminb
                 optimx[[7]][[i]] <- k[2,][[i]]$Trait1$ucminf
                 optimx[[8]][[i]] <- k[2,][[i]]$Trait1$'Nelder-Mead'
@@ -605,8 +616,40 @@ fitContinuous.run<-function(){
                 optimx[[11]][[i]] <- k[2,][[i]]$Trait1$BFGS
                 optimx[[12]][[i]] <- k[2,][[i]]$Trait1$newuoa}
             for(j in c(1:length(optimx))){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),x$beta,x$delta)))),3,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","L","B","D")}
+              if (well[j]==wellt[j]){
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta)))),7,ncol(k))))))
+	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),NA,NA,x$beta,NA,NA,x$delta)))),7,ncol(k))))))
+	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}}
+	return(lt)
+      }
+#This fitContinuous.run does not include beta bounds.
+fitContinuous.run<-function(){
+        k<-matrix(j,1,n)
+	k<-rbind(k,apply(k,2,function(x){
+            fitContinuous(tree,
+                          chdata,
+                          model="delta",
+                          bounds=list(delta=c(s,x)))
+          }))
+        for (i in c(1:n)){
+                optimx[[1]][[i]] <- k[2,][[i]]$Trait1$spg
+                optimx[[2]][[i]] <- k[2,][[i]]$Trait1$Rcgmin
+                optimx[[3]][[i]] <- k[2,][[i]]$Trait1$Rvmmin
+                optimx[[4]][[i]] <- k[2,][[i]]$Trait1$bobyqa
+                optimx[[5]][[i]] <- k[2,][[i]]$Trait1$'L-BFGS-B'
+                optimx[[6]][[i]] <- k[2,][[i]]$Trait1$nlminb
+                optimx[[7]][[i]] <- k[2,][[i]]$Trait1$ucminf
+                optimx[[8]][[i]] <- k[2,][[i]]$Trait1$'Nelder-Mead'
+                optimx[[9]][[i]] <- k[2,][[i]]$Trait1$nlm
+                optimx[[10]][[i]] <- k[2,][[i]]$Trait1$CG
+                optimx[[11]][[i]] <- k[2,][[i]]$Trait1$BFGS
+                optimx[[12]][[i]] <- k[2,][[i]]$Trait1$newuoa}
+            for(j in c(1:length(optimx))){
+              if (well[j]==wellt[j]){
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta)))),7,ncol(k))))))}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),NA,NA,x$beta,NA,NA,x$delta)))),7,ncol(k))))))
+	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}}
 	return(lt)
       }
 
