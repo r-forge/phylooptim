@@ -449,14 +449,14 @@ rownames(otd) <- otd$nodes
 ot <- with(otd,ouchtree(nodes=nodes,ancestors=ancestors,times=times,labels=labels))
 otd$regimes <- as.factor("global")
 
-h1 <- hansen(
-             tree=ot,
-             data=otd[c("wingL")],
-             regimes=otd["regimes"],
-             sqrt.alpha=c(.1),
-             sigma=c(.1)
-             )
-summary(h1)
+#h1 <- hansen(
+#             tree=ot,
+#             data=otd[c("wingL")],
+#             regimes=otd["regimes"],
+#             sqrt.alpha=c(.1),
+#             sigma=c(.1)
+#             )
+#summary(h1)
 
 #Number of starting points
 m<- 50
@@ -512,3 +512,5 @@ l<-hansen.run()
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
+
+save.image("/home/michels/repository/phylooptim/pkg/R/ouch/oucherror.RData")
