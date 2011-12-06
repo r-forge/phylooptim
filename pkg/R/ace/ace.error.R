@@ -383,3 +383,5 @@ l<-ace.run()
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
+
+save.image("/home/michels/repository/phylooptim/pkg/R/ace/aceerror.RData")
