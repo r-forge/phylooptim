@@ -145,7 +145,7 @@ hansen <- function (data, tree, regimes, sqrt.alpha, sigma,
       }
     } else {
 
-wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa",1,1,1,1,1,1,1,1)
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 out <- vector("list", length(well))
 names(out)<-well
@@ -460,7 +460,8 @@ summary(h1)
 
 #Number of starting points
 m<- 50
-j<-seq(from=.1, to=4, length.out=m)
+j<-seq(from=.01, to=4, length.out=m)
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
 names(optimx)<-well
@@ -497,8 +498,12 @@ hansen.run<-function(){
                 optimx[[11]][[i]] <- k[2,][[i]]$BFGS
                 optimx[[12]][[i]] <- k[2,][[i]]$newuoa}
             for(j in c(1:length(optimx))){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),4,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","T","L","S","A")}
+              if (well[j]==wellt[j]){
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(0.001,1e50,as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),6,ncol(k))))))
+	        colnames(lt[[j]])<-c("I","lb","ub","T","L","S","A")}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),6,ncol(k))))))
+	        colnames(lt[[j]])<-c("I","lb","ub","T","L","S","A")}
+}
 	return(lt)
       }
 
