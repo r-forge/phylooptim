@@ -551,24 +551,33 @@ ouMatrix <- function(vcvMatrix, alpha)
     	
 
 require(optimx)
-data(geospiza)
-attach(geospiza)
+#data(geospiza)
+#attach(geospiza)
 
-td<-treedata(geospiza.tree,geospiza.data[,1],sort=T)
+#td<-treedata(geospiza.tree,geospiza.data[,1],sort=T)
+#ntax=length(td$phy$tip.label)
+#chdata<- geospiza.data[,1]# TIP data
+#tree<- td$phy# Tree
+#n<- length(chdata)
+
+aqui.trait <- read.delim("Aquilegia-traits.txt", header=T)
+aqui.tree <- read.tree("Aquilegia.phy")
+
+td <- treedata(aqui.tree,aqui.trait[,2],sort=T)
 ntax=length(td$phy$tip.label)
-chdata<- geospiza.data[,1]# TIP data
+chdata<- aqui.trait[,2]# TIP data
 tree<- td$phy# Tree
 n<- length(chdata)
 
-#l<-fitContinuous(tree,chdata,model="delta",bounds=list(delta=c(.003,40)))
+l<-fitContinuous(tree,chdata,model="delta",bounds=list(delta=c(.003,40)))
 
 
 #Number of starting points
-n<-50
+n<-5
 #Max bound
 M<-700
 #Min bound
-m<-400
+m<-1
 #Start Value
 s <- 1.000001e-08
 #Lower Bound delta
@@ -587,7 +596,7 @@ optimx <- vector("list", length(well))
 names(optimx)<-well
 
 for (i in c(1:length(optimx))){
-      optimx[[i]]<-vector("list",m)
+      optimx[[i]]<-vector("list",n)
       names(optimx[[i]]) <- j
 }
 
@@ -647,7 +656,8 @@ fitContinuous.run<-function(){
                 optimx[[12]][[i]] <- k[2,][[i]]$Trait1$newuoa}
             for(j in c(1:length(optimx))){
               if (well[j]==wellt[j]){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta)))),7,ncol(k))))))}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta)))),7,ncol(k))))))
+              	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}else{
                 lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),NA,NA,x$beta,NA,NA,x$delta)))),7,ncol(k))))))
 	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}}
 	return(lt)
