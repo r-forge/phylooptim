@@ -492,7 +492,7 @@ otd$regimes <- as.factor("global")
 #summary(h1)
 
 #Number of starting points
-m<- 50
+m<- 25
 j<-seq(from=.01, to=4, length.out=m)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
@@ -546,4 +546,4 @@ l<-hansen.run()
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/repository/phylooptim/pkg/R/ouch/oucherror.RData")
+save.image("/home/michels/repository/phylooptim/pkg/R/ouch/aquioucherror.RData")
