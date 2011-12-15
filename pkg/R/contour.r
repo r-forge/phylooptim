@@ -178,11 +178,12 @@ bw<-bw.pal(round(numcol*sum(k<=0)/length(k)))
 cols<-c(bw,wr)
 rcols<-cols[round((1:(length(levels)))*length(cols)/length(levels))]
 
+png(file="contour.png")
 filled.contour(x1range,x2range,res,levels=levels,col=rcols,  
 		plot.axes={
 			axis(1)
 			axis(2)
-      plot.title=title(main=paste("L-BFGS-B Delta bounds: ",bounds$delta[1],",",bounds$delta[2]),xlab="log beta",
+      plot.title=title(main=paste("L-BFGS-B Delta bounds: ",round(bounds$delta[1],3),",",round(bounds$delta[2],3)),xlab="log beta",
       ylab="log delta")
 			contour(x1range,x2range,res,add=TRUE,nlevels=length(levels))
 			arrows(x[s], y[s], x[s+1], y[s+1],length=.1,col=gray(seq(0.5,0,len=length(x))),lwd=2)
@@ -191,3 +192,16 @@ filled.contour(x1range,x2range,res,levels=levels,col=rcols,
 		}
 )
 
+f <- function(x){
+xt <- table(x)
+t <- as.numeric(names(xt[xt == max(xt)]))  
+return(t)}
+
+t1 <- rep(NA,length(obj.list)); t2 <- rep(NA,length(obj.list)); 
+for (i in c(1:length(obj.list))){t1[i] <- round(obj.list[[i]]$par[[1]][1],5);t2[i] <- round(obj.list[[i]]$par[[1]][2],5)}
+x1 <- f(t1)
+y1 <- f(t2)
+
+#Figure out zero point first, then it will work
+points(x1-.75,y1, pch = 3, cex = 4, col = "yellow")
+dev.off()
