@@ -573,7 +573,7 @@ l<-fitContinuous(tree,chdata,model="delta",bounds=list(delta=c(.003,40)))
 
 
 #Number of starting points
-n<-5
+n<-50
 #Max bound
 M<-700
 #Min bound
@@ -669,4 +669,5 @@ l2<-fitContinuous.run()
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/repository/phylooptim/pkg/R/geiger/geigererror.RData")
+#save.image("/home/michels/repository/phylooptim/pkg/R/geiger/aquigeigererror.RData")
+save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/geiger/aquigeigererror.RData")
