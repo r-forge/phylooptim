@@ -328,9 +328,16 @@ print.ace <- function(x, digits = 4, ...)
 }
 
 library(optimx)
-require(ape)
 
-#Input data
+##For geospiza data
+#library(geiger)
+#data(geospiza)
+#phy <- geospiza$geospiza.tree
+#dv <- as.factor(geospiza$geospiza.data[,1]>4.2)
+#names(dv) <- names(geospiza$geospiza.data)
+
+#For aquilegia data
+require(ape)
 phy <- read.tree("Aquilegia.phy")
 dv <- read.delim("Aquilegia-traits.txt", header=T)[,2]
 names(dv) <- read.delim("Aquilegia-traits.txt", header=T)[,1]
