@@ -2,16 +2,19 @@
 
 load("/home/michels/repository/phylooptim/pkg/R/geiger/geigererror.RData")
 geiger <- l
+l <- NULL
 geiger$mean_lik <- round(c(mean(geiger[[1]][,2]),mean(geiger[[2]][,2]),mean(geiger[[3]][,2]),mean(geiger[[4]][,2]),mean(geiger[[5]][,2]),mean(geiger[[6]][,2]),mean(geiger[[7]][,2]),mean(geiger[[8]][,2]),mean(geiger[[9]][,2]),mean(geiger[[10]][,2]),mean(geiger[[11]][,2]),mean(geiger[[12]][,2])),5)
 names(geiger$mean_lik) <- names(geiger)[1:12]
                  
 load("/home/michels/repository/phylooptim/pkg/R/ace/aceerror.RData")
 ace <- l
+l <- NULL
 ace$mean_lik <- round(c(mean(ace[[1]][,5]),mean(ace[[2]][,5]),mean(ace[[3]][,5]),mean(ace[[4]][,5]),mean(ace[[5]][,5]),mean(ace[[6]][,5]),mean(ace[[7]][,5]),mean(ace[[8]][,5]),mean(ace[[9]][,5]),mean(ace[[10]][,5]),mean(ace[[11]][,5]),mean(ace[[12]][,5])),5)
 names(ace$mean_lik) <- names(ace)[1:12]
 
 load("/home/michels/repository/phylooptim/pkg/R/ouch/oucherror.RData")
 ouch <- l
+l <- NULL
 ouch$mean_lik <- round(c(mean(ouch[[1]][,5]),mean(ouch[[2]][,5]),mean(ouch[[3]][,5]),mean(ouch[[4]][,5]),mean(ouch[[5]][,5]),mean(ouch[[6]][,5]),mean(ouch[[7]][,5]),mean(ouch[[8]][,5]),mean(ouch[[9]][,5]),mean(ouch[[10]][,5]),mean(ouch[[11]][,5]),mean(ouch[[12]][,5])),5)
 names(ouch$mean_lik) <- names(ouch)[1:12]
 
@@ -41,17 +44,21 @@ geospiza <- as.table(smoke)
 
 #Results for aquilegia data
 load("/home/michels/repository/phylooptim/pkg/R/geiger/aquigeigererror.RData")
-geiger <- l
+geiger <- l2
+l2 <- NULL
+l <- NULL
 geiger$mean_lik <- round(c(mean(geiger[[1]][,2]),mean(geiger[[2]][,2]),mean(geiger[[3]][,2]),mean(geiger[[4]][,2]),mean(geiger[[5]][,2]),mean(geiger[[6]][,2]),mean(geiger[[7]][,2]),mean(geiger[[8]][,2]),mean(geiger[[9]][,2]),mean(geiger[[10]][,2]),mean(geiger[[11]][,2]),mean(geiger[[12]][,2])),5)
 names(geiger$mean_lik) <- names(geiger)[1:12]
                  
 load("/home/michels/repository/phylooptim/pkg/R/ace/aquiaceerror.RData")
 ace <- l
+l <- NULL
 ace$mean_lik <- round(c(mean(ace[[1]][,5]),mean(ace[[2]][,5]),mean(ace[[3]][,5]),mean(ace[[4]][,5]),mean(ace[[5]][,5]),mean(ace[[6]][,5]),mean(ace[[7]][,5]),mean(ace[[8]][,5]),mean(ace[[9]][,5]),mean(ace[[10]][,5]),mean(ace[[11]][,5]),mean(ace[[12]][,5])),5)
 names(ace$mean_lik) <- names(ace)[1:12]
 
 load("/home/michels/repository/phylooptim/pkg/R/ouch/aquioucherror.RData")
 ouch <- l
+l <- NULL
 ouch$mean_lik <- round(c(mean(ouch[[1]][,5]),mean(ouch[[2]][,5]),mean(ouch[[3]][,5]),mean(ouch[[4]][,5]),mean(ouch[[5]][,5]),mean(ouch[[6]][,5]),mean(ouch[[7]][,5]),mean(ouch[[8]][,5]),mean(ouch[[9]][,5]),mean(ouch[[10]][,5]),mean(ouch[[11]][,5]),mean(ouch[[12]][,5])),5)
 names(ouch$mean_lik) <- names(ouch)[1:12]
 
