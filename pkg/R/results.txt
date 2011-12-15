@@ -1,0 +1,20 @@
+The "correct" likelihood was chosen by taking the average of the likelihoods within each method, and then finding the mode.
+
+Key
+"--" Didn't converge to the liklihood
+"O"  Nearly converged was withing +-0.05
+"Y"  Converged to the correct likelihood
+
+geospiza
+       spg Rcgmin Rvmmin bobyqa L-BFGS-B nlminb ucminf Nelder-Mead nlm CG BFGS newuoa
+geiger --  Y      --     Y      --       Y      Y      O           --  -- --   Y 
+ace    O   Y      --     O      Y        Y      Y      Y           Y   -- O    Y
+ouch   Y   --     --     Y      O        O      O      Y           O   O  O    Y
+  
+aquilegia
+       spg Rcgmin Rvmmin bobyqa L-BFGS-B nlminb ucminf Nelder-Mead nlm CG BFGS newuoa
+geiger Y   Y      Y      Y      --       Y      Y      Y           --  -- --   Y
+ace    Y   Y      Y      Y      Y        Y      Y      O           Y   Y  Y    Y
+ouch   Y   --     --     Y      --       Y      Y      O           --  -- --   Y
+
+
