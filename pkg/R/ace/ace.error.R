@@ -344,7 +344,7 @@ names(dv) <- read.delim("Aquilegia-traits.txt", header=T)[,1]
 l1 <- ace(dv,phy,type='discrete',ip=3)
 
 #Number of starting points
-m<- 5
+m<- 50
 #j<-seq(from=1/100, to=10, length.out=m)
 j<-seq(from=0.72, to=4.31, length.out=m)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
@@ -392,4 +392,4 @@ l<-ace.run()
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/repository/phylooptim/pkg/R/ace/aceerror.RData")
+save.image("/home/michels/repository/phylooptim/pkg/R/ace/aquiaceerror.RData")
