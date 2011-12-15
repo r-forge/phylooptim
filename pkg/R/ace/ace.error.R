@@ -247,13 +247,13 @@ if (well[i]==wellt[i]){
         oldwarn <- options("warn")
         options(warn = -1)
 
-        h <- nlm(function(p) dev(p), p = obj$rates, iterlim = 1,
-                 stepmax = 0, hessian = TRUE)$hessian
+    #    h <- nlm(function(p) dev(p), p = obj$rates, iterlim = 1,
+    #             stepmax = 0, hessian = TRUE)$hessian
         options(oldwarn)
-        if (any(h == 0))
-          warning("The likelihood gradient seems flat in at least one dimension (gradient null):\ncannot compute the standard-errors of the transition rates.\n")
-        else obj$se <- sqrt(diag(solve(h)))
-        obj$index.matrix <- index.matrix
+    #    if (any(h == 0))
+    #      warning("The likelihood gradient seems flat in at least one dimension (gradient null):\ncannot compute the standard-errors of the transition rates.\n")
+    #    else obj$se <- sqrt(diag(solve(h)))
+   #     obj$index.matrix <- index.matrix
         if (CI) {
             obj$lik.anc <- dev(obj$rates, TRUE)
             colnames(obj$lik.anc) <- lvls
@@ -328,17 +328,18 @@ print.ace <- function(x, digits = 4, ...)
 }
 
 library(optimx)
-library(geiger)
-data(geospiza)
-attach(geospiza)
-phy<-drop.tip(geospiza.tree,"olivacea")
-dv<-as.factor(geospiza.data[,1]>4.2)
-names(dv)<-rownames(geospiza.data)
-#ace(dv,phy,type='discrete',ip=3)
+require(ape)
+
+#Input data
+phy <- read.tree("Aquilegia.phy")
+dv <- read.delim("Aquilegia-traits.txt", header=T)[,2]
+names(dv) <- read.delim("Aquilegia-traits.txt", header=T)[,1]
+l1 <- ace(dv,phy,type='discrete',ip=3)
 
 #Number of starting points
-m<- 50
+m<- 5
 j<-seq(from=1/100, to=10, length.out=m)
+#j<-seq(from=0.72, to=4.31, length.out=m)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
@@ -370,10 +371,10 @@ ace.run<-function(){
                 optimx[[12]][[i]] <- k[2,][[i]]$newuoa}
             for(j in c(1:length(optimx))){
               if (well[j]==wellt[j]){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$lb,x$ub,x$rates,x$loglik,x$se)))),5,ncol(k))))))
-              	colnames(lt[[j]])<-c("I","lb","ub","P","L","S")}else{
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,x$rates,x$loglik,x$se)))),5,ncol(k))))))                  
-	        colnames(lt[[j]])<-c("I","lb","ub","P","L","S")}}
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$lb,x$ub,x$rates,x$loglik)))),4,ncol(k))))))
+              	colnames(lt[[j]])<-c("I","lb","ub","P","L")}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,x$rates,x$loglik,x$se)))),4,ncol(k))))))                  
+	        colnames(lt[[j]])<-c("I","lb","ub","P","L")}}
 	return(lt)
       }
         
