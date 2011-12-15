@@ -345,8 +345,8 @@ l1 <- ace(dv,phy,type='discrete',ip=3)
 
 #Number of starting points
 m<- 5
-j<-seq(from=1/100, to=10, length.out=m)
-#j<-seq(from=0.72, to=4.31, length.out=m)
+#j<-seq(from=1/100, to=10, length.out=m)
+j<-seq(from=0.72, to=4.31, length.out=m)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
