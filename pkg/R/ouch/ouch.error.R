@@ -432,15 +432,48 @@ setMethod(
           }
           )
 
-require(geiger)
 require(optimx)
-data(geospiza)
-str(geospiza)
-sapply(geospiza,class)
 
-nc <- with(geospiza,name.check(geospiza.tree,geospiza.data))
-tree <- with(geospiza,drop.tip(geospiza.tree,nc$Tree.not.data))
-dat <- geospiza$geospiza.data
+##For geospiza data
+#require(geiger)
+#data(geospiza)
+#str(geospiza)
+#sapply(geospiza,class)
+#nc <- with(geospiza,name.check(geospiza.tree,geospiza.data))
+#tree <- with(geospiza,drop.tip(geospiza.tree,nc$Tree.not.data))
+#dat <- geospiza$geospiza.data
+#ot <- ape2ouch(tree)
+#otd <- as(ot,"data.frame")
+#dat$labels <- rownames(dat)
+#otd <- merge(otd,dat,by="labels",all=TRUE)
+#rownames(otd) <- otd$nodes
+#ot <- with(otd,ouchtree(nodes=nodes,ancestors=ancestors,times=times,labels=labels))
+#otd$regimes <- as.factor("global")
+
+#h1 <- hansen(
+#             tree=ot,
+#             data=otd[c("wingL")],
+#             regimes=otd["regimes"],
+#             sqrt.alpha=c(.1),
+#             sigma=c(.1)
+#             )
+#summary(h1)
+
+#For aquilegia data
+require(ape)
+aquilegia <- vector("list",2)
+aquilegia[[1]] <- read.tree("Aquilegia.phy")
+ddd <- read.delim("Aquilegia-traits.txt", header=T)
+dd <- ddd[,2]
+ee <- ddd[,3]
+d <- as.numeric(dd)
+e <- as.numeric(ee)
+aquilegia[[2]] <- data.frame(T1=d,T2=e)
+rownames(aquilegia[[2]]) <- read.delim("Aquilegia-traits.txt", header=T)[,1]
+names(aquilegia) <- c("aquilegia.tree","aquilegia.data")
+sapply(aquilegia,class)
+tree <- with(aquilegia,aquilegia.tree)
+dat <- aquilegia$aquilegia.data
 ot <- ape2ouch(tree)
 otd <- as(ot,"data.frame")
 dat$labels <- rownames(dat)
@@ -451,7 +484,7 @@ otd$regimes <- as.factor("global")
 
 #h1 <- hansen(
 #             tree=ot,
-#             data=otd[c("wingL")],
+#             data=otd[c("T1")],
 #             regimes=otd["regimes"],
 #             sqrt.alpha=c(.1),
 #             sigma=c(.1)
@@ -479,7 +512,7 @@ hansen.run<-function(){
 	k<-rbind(k,apply(k,2,function(x){
           hansen(
                  tree=ot,
-                 data=otd[c("wingL")],
+                 data=otd[c("T1")],
                  regimes=otd["regimes"],
                  sqrt.alpha=c(x),
                  sigma=c(x)
