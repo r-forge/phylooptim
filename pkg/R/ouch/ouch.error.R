@@ -148,11 +148,13 @@ hansen <- function (data, tree, regimes, sqrt.alpha, sigma,
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 out <- vector("list", length(well))
+for (i in c(1:length(out))){out[[i]] <- vector("list", 2)}
 names(out)<-well
 
   for (i in c(1:length(out))){
     if (well[i]==wellt[i]){
-	out[[i]] <- optimx(
+        begin.time <-proc.time()
+	out[[i]][[1]] <- optimx(
                       fn = function (par) {
                      ou.lik.fn(
                                tree=tree,
@@ -165,9 +167,10 @@ names(out)<-well
                       p=c(sqrt.alpha,sigma),
                       lower = rep(0.001,(nalpha+nsigma)), upper = rep(1e50,(nalpha+nsigma)),
                       method=well[i]
-                      )}else{
-
-	out[[i]] <- optimx(
+                      )
+        out[[i]][[2]] <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
+        begin.time <-proc.time()
+	out[[i]][[1]] <- optimx(
                       fn = function (par) {
                      ou.lik.fn(
                                tree=tree,
@@ -179,7 +182,8 @@ names(out)<-well
                    }, 
                       p=c(sqrt.alpha,sigma),
                       method=well[i]
-                      )}
+                      )
+        out[[i]][[2]] <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
 }
 
       	opt <- optim(
@@ -207,14 +211,17 @@ names(out)<-well
       }
     }
   }
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
   obj.list <- vector("list", length(out))
+  for (i in c(1:length(obj.list))){obj.list[[i]] <- vector("list", 2)}
   names(obj.list) <- well
   for (i in c(1:length(obj.list))){
 
-    sqrt.alpha <- unlist(out[[i]]$par)[seq(nalpha)]
+    sqrt.alpha <- unlist(out[[i]][[1]]$par)[seq(nalpha)]
 #   sqrt.alpha <- opt$par[seq(nalpha)]
-    sigma <- unlist(out[[i]]$par)[nalpha+seq(nsigma)]
+    sigma <- unlist(out[[i]][[1]]$par)[nalpha+seq(nsigma)]
 #   sigma <- opt$par[nalpha+seq(nsigma)]
+    time <- unlist(out[[i]][[2]])
     optim.diagn <- list(convergence=opt$convergence,message=opt$message)
 
   if (hessian) {
@@ -246,7 +253,7 @@ names(out)<-well
     count <- count+length(reg[[n]])
   }
   
-  obj.list[[i]]<-new(
+  obj.list[[i]][[1]] <- new(
       'hansentree',
       as(tree,'ouchtree'),
       call=match.call(),
@@ -261,6 +268,7 @@ names(out)<-well
       sqrt.alpha=sqrt.alpha,
       loglik=-0.5*sol$deviance
       )
+  obj.list[[i]][[2]] <- time
   }
 obj.list
 }
@@ -452,10 +460,10 @@ require(optimx)
 
 #h1 <- hansen(
 #             tree=ot,
-#             data=otd[c("wingL")],
+#             data=otd["wingL"],
 #             regimes=otd["regimes"],
-#             sqrt.alpha=c(.1),
-#             sigma=c(.1)
+#             sqrt.alpha=.1,
+#             sigma=.1
 #             )
 #summary(h1)
 
@@ -482,17 +490,17 @@ rownames(otd) <- otd$nodes
 ot <- with(otd,ouchtree(nodes=nodes,ancestors=ancestors,times=times,labels=labels))
 otd$regimes <- as.factor("global")
 
-#h1 <- hansen(
-#             tree=ot,
-#             data=otd[c("T1")],
-#             regimes=otd["regimes"],
-#             sqrt.alpha=c(.1),
-#             sigma=c(.1)
-#             )
-#summary(h1)
+h1 <- hansen(
+             tree=ot,
+             data=otd[c("T1")],
+             regimes=otd["regimes"],
+             sqrt.alpha=c(.1),
+             sigma=c(.1)
+             )
+summary(h1)
 
 #Number of starting points
-m<- 25
+m<- 40
 j<-seq(from=.01, to=4, length.out=m)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
@@ -506,6 +514,8 @@ for (i in c(1:length(optimx))){
 
 lt <- vector("list",length(optimx))
 names(lt) <- well
+time <- vector("list",length(optimx))
+for (i in c(1:length(optimx))){time[[i]] <- rep(NA,m)}
 
 hansen.run<-function(){
         k<-matrix(j,1,m)
@@ -517,25 +527,13 @@ hansen.run<-function(){
                  sqrt.alpha=c(x),
                  sigma=c(x)
                 )}))
-            for (i in c(1:m)){
-                optimx[[1]][[i]] <- k[2,][[i]]$spg
-                optimx[[2]][[i]] <- k[2,][[i]]$Rcgmin
-                optimx[[3]][[i]] <- k[2,][[i]]$Rvmmin
-                optimx[[4]][[i]] <- k[2,][[i]]$bobyqa
-                optimx[[5]][[i]] <- k[2,][[i]]$'L-BFGS-B'
-                optimx[[6]][[i]] <- k[2,][[i]]$nlminb
-                optimx[[7]][[i]] <- k[2,][[i]]$ucminf
-                optimx[[8]][[i]] <- k[2,][[i]]$'Nelder-Mead'
-                optimx[[9]][[i]] <- k[2,][[i]]$nlm
-                optimx[[10]][[i]] <- k[2,][[i]]$CG
-                optimx[[11]][[i]] <- k[2,][[i]]$BFGS
-                optimx[[12]][[i]] <- k[2,][[i]]$newuoa}
-            for(j in c(1:length(optimx))){
+         for (i in c(1:length(optimx))){for (j in c(1:m)){optimx[[i]][[j]] <- k[2,][[j]][[i]][[1]];time[[i]][j] <- k[2,][[j]][[i]][[2]]}}
+         for(j in c(1:length(optimx))){
               if (well[j]==wellt[j]){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(0.001,1e50,as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),6,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","lb","ub","T","L","S","A")}else{
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),6,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","lb","ub","T","L","S","A")}
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(0.001,1e50,as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),6,ncol(k))),time[[j]])))
+	        colnames(lt[[j]])<-c("I","lb","ub","T","L","S","A","time")}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,as.numeric(x@theta),x@loglik,x@sigma,x@sqrt.alpha)))),6,ncol(k))),time[[j]])))
+	        colnames(lt[[j]])<-c("I","lb","ub","T","L","S","A","time")}
 }
 	return(lt)
       }
@@ -546,4 +544,4 @@ l<-hansen.run()
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/repository/phylooptim/pkg/R/ouch/aquioucherror.RData")
+save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ouch/aquioucherror.RData")
