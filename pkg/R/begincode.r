@@ -11,6 +11,9 @@ library(optimx)
 data(geospiza)
 attach(geospiza)
 
+td<-treedata(geospiza.tree,geospiza.data[,1],sort=T)
+ntax=length(td$phy$tip.label)
+
 bounds=list(delta=c(exp(-18.42068),exp(6.304337))) #Optimization bounds
 meserr=0 #Measurement error
 userstart=NULL #Starting position
@@ -19,8 +22,15 @@ numcol<-50 #number of colors to use
 precision=100 #Number of points per variable to compute
 plot3d=FALSE #Surface plot. Note, doesn't work if part of the surface to be plotted is undefined
 
-td<-treedata(geospiza.tree,geospiza.data[,1],sort=T)
-ntax=length(td$phy$tip.label)
+#require(ape)
+#tree<-read.tree("BJO.Monocot.tre")
+#trait<-read.delim("BJO.monocot_GS")
+
+#td <- treedata(tree,trait[,3],sort=T)
+#ntax=length(td$phy$tip.label)
+#chdata<- trait[,3]# TIP data
+#tree<- td$phy# Tree
+#n<- length(chdata)
 
 #Setting up the range upon which we want to plot the function
 x1range<-seq(-5,10,length.out=precision) #beta
@@ -63,7 +73,6 @@ bounds <- data.frame(t(bounds))
 #--------------------------------
 #---        FIT MODEL         ---
 #--------------------------------
-
 chdata<- geospiza.data[,1]# TIP data
 tree<- td$phy# Tree
 n<- length(chdata)
@@ -151,11 +160,43 @@ foostore=list(x1=NULL,x2=NULL)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 obj.list <- vector("list", length(well))
+for (i in c(1:length(obj.list))){
+  obj.list[[i]] <- vector("list", 2)
+  names(obj.list[[i]]) <- c(well[i],"time")}
+
 names(obj.list)<-well
 for (i in c(1:length(obj.list))){
     if (well[i]==wellt[i]){
-		obj.list[[i]] <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])}else{
-		obj.list[[i]] <- optimx(foo, p=start,method=well[i])}}
+                begin.time <-proc.time()
+		obj.list[[i]][[1]] <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])
+		obj.list[[i]][[2]] <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
+                begin.time <-proc.time()
+		obj.list[[i]][[1]] <- optimx(foo, p=start,method=well[i])
+		obj.list[[i]][[2]] <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
+}
+
+time.table <- data.frame(time=rep(NA,length(obj.list)))
+for (i in c(1:length(obj.list))){time.table[i,] <- unlist(obj.list[[i]][2])}
+rownames(time.table) <- well
+
+load("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/geiger/geigererror.RData")
+liklhd <- 10.44057
+for (i in c(1:length(obj.list))){
+  prptn <- rep(NA,50)
+    for (j in c(1:50)){if (round(l[[i]][,2],5)[j]==liklhd){prptn[j] <- 1}else{prptn[j] <- 0}}
+  l[[i]] <- cbind(l[[i]],prptn)
+}
+
+proportion <- c(mean(l[[1]][,9]),mean(l[[2]][,9]),mean(l[[3]][,9]),mean(l[[4]][,9]),mean(l[[5]][,9]),mean(l[[6]][,9]),mean(l[[7]][,9]),mean(l[[8]][,9]),mean(l[[9]][,9]),mean(l[[10]][,9]),mean(l[[11]][,9]),mean(l[[12]][,9]))
+
+time.table <- cbind(time.table,proportion)
+
+png(file="propvstime.png")
+plot(time.table[,1],time.table[,2],pch=NA,xlab="Time",ylab="Proportion",main="fitContinuous")
+for (i in c(1:length(obj.list))){
+  text(x=time.table[,1][i],y=time.table[,2][i],labels=rownames(time.table)[i])
+}
+dev.off()
 
 x<-foostore$x1
 y<-foostore$x2
