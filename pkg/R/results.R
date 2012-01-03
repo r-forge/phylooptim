@@ -2,6 +2,7 @@
 load("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/geiger/geigererror.RData")
 geiger <- l2
 l2 <- NULL
+
 l <- NULL
 geiger$mean_lik <- round(c(mean(geiger[[1]][,2]),mean(geiger[[2]][,2]),mean(geiger[[3]][,2]),mean(geiger[[4]][,2]),mean(geiger[[5]][,2]),mean(geiger[[6]][,2]),mean(geiger[[7]][,2]),mean(geiger[[8]][,2]),mean(geiger[[9]][,2]),mean(geiger[[10]][,2]),mean(geiger[[11]][,2]),mean(geiger[[12]][,2])),5)
 names(geiger$mean_lik) <- names(geiger)[1:12]
@@ -118,7 +119,7 @@ dev.off()
 
 #Results for aquilegia data
 load("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/geiger/aquigeigererror.RData")
-geiger <- l2
+geiger <- l
 l2 <- NULL
 l <- NULL
 geiger$mean_lik <- round(c(mean(geiger[[1]][,2]),mean(geiger[[2]][,2]),mean(geiger[[3]][,2]),mean(geiger[[4]][,2]),mean(geiger[[5]][,2]),mean(geiger[[6]][,2]),mean(geiger[[7]][,2]),mean(geiger[[8]][,2]),mean(geiger[[9]][,2]),mean(geiger[[10]][,2]),mean(geiger[[11]][,2]),mean(geiger[[12]][,2])),5)
