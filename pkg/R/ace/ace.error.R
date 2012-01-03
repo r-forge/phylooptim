@@ -231,15 +231,17 @@ names(obj.list)<-well
         }
 
 if (well[i]==wellt[i]){
-
+        begin.time <-proc.time()
         out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
                       lower = rep(0, np), upper = rep(1e50, np),
                       method=well[i])
-        lb <- 0;ub <- 1e50}else{
-        
+        lb <- 0;ub <- 1e50;time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
+        begin.time <-proc.time()
         out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
-                      method=well[i])}
+                      method=well[i])
+	time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
 
+        obj$time <- time
         obj$lb <- lb
         obj$ub <- ub
         obj$loglik <- -out$fvalues$fvalues/2
@@ -332,16 +334,26 @@ library(optimx)
 ##For geospiza data
 #library(geiger)
 #data(geospiza)
-#phy <- geospiza$geospiza.tree
-#dv <- as.factor(geospiza$geospiza.data[,1]>4.2)
-#names(dv) <- names(geospiza$geospiza.data)
+#attach(geospiza)
+#dv <-treedata(geospiza.tree,as.factor(geospiza.data[,1]>4.2),sort=T)
 
-#For aquilegia data
+##For aquilegia data
+#require(ape)
+#require(geiger)
+#dv <-treedata(read.tree("Aquilegia.phy"),read.delim("Aquilegia-traits.txt", header=T)[,2],sort=T)
+
+##For Monocot data
 require(ape)
-phy <- read.tree("Aquilegia.phy")
-dv <- read.delim("Aquilegia-traits.txt", header=T)[,2]
-names(dv) <- read.delim("Aquilegia-traits.txt", header=T)[,1]
-l1 <- ace(dv,phy,type='discrete',ip=3)
+require(geiger)
+dv <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+
+begin.time <- proc.time()
+l1 <- ace(dv$data,dv$phy,type='discrete',ip=3)
+
+#Time in minutes
+total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
+
+
 
 #Number of starting points
 m<- 50
@@ -362,7 +374,7 @@ names(lt) <- well
 
 ace.run<-function(){
         k<-matrix(j,1,m)
-	k<-rbind(k,apply(k,2,function(x) {ace(dv,phy,type='discrete',ip=x)}))
+	k<-rbind(k,apply(k,2,function(x) {ace(dv$data,dv$phy,type='discrete',ip=x)}))
             for (i in c(1:m)){
                 optimx[[1]][[i]] <- k[2,][[i]]$spg
                 optimx[[2]][[i]] <- k[2,][[i]]$Rcgmin
@@ -378,18 +390,17 @@ ace.run<-function(){
                 optimx[[12]][[i]] <- k[2,][[i]]$newuoa}
             for(j in c(1:length(optimx))){
               if (well[j]==wellt[j]){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$lb,x$ub,x$rates,x$loglik)))),4,ncol(k))))))
-              	colnames(lt[[j]])<-c("I","lb","ub","P","L")}else{
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,x$rates,x$loglik,x$se)))),4,ncol(k))))))                  
-	        colnames(lt[[j]])<-c("I","lb","ub","P","L")}}
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(x$lb,x$ub,x$rates,x$loglik,x$time)))),5,ncol(k))))))
+              	colnames(lt[[j]])<-c("I","lb","ub","P","L","time")}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(NA,NA,x$rates,x$loglik,x$time)))),5,ncol(k))))))                  
+	        colnames(lt[[j]])<-c("I","lb","ub","P","L","time")}}
 	return(lt)
       }
         
-
 begin.time <-proc.time()
 l<-ace.run()
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/repository/phylooptim/pkg/R/ace/aquiaceerror.RData")
+save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ace/aquiaceerror.RData")
