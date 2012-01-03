@@ -121,7 +121,8 @@ names(obj.list)<-well
 	#----- MINIMIZE NEGATIVE LOG LIKELIHOOD
 	
 	beta.start<-var(ds$data)/max(branching.times(ds$tree))
-
+        #For monocot Data
+        #beta.start <- 0.1
 
 	out         <- NULL
 	
@@ -165,7 +166,7 @@ names(obj.list)<-well
 	} else if (model=="lambda"){
 		k<-3
 		
-		start=log(c(beta.start, 0.5))
+		start=log(c(beta.start, 0.1))
 		lower=log(bounds[1,c("beta","lambda")])
 		upper=log(bounds[2,c("beta","lambda")])
 		
@@ -241,7 +242,7 @@ names(obj.list)<-well
 		
 
           k<-3
-		start=log(c(beta.start, 0.5))
+		start=log(c(beta.start, 1.5))
 		lower=log(bounds[1,c("beta","delta")])
 		upper=log(bounds[2,c("beta","delta")])
 
@@ -260,6 +261,7 @@ names(obj.list)<-well
 	
 	diag(vv)<-diag(vv)+meserr^2
 	determinantVCV<-det(vv)
+      #  if (is.nan(determinantVCV)){determinantVCV=0}
 	if (determinantVCV==0){ #old delta had bounds, so couldn't get very low values and so didn't get singular matrices. Now that can happen, so have to guard against it
 		warning("Possibly singular variance-covariance matrix, so giving this particular parameter combination a very bad likelihood score (rather than crashing)")
 		return(badLnL)
@@ -270,12 +272,16 @@ names(obj.list)<-well
 }
                 dplot<-TRUE
                 foostore=list(x1=NULL,x2=NULL)
+                print(start)
 if (well[i]==wellt[i]){
-		o <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])}else{
-
-		o <- optimx(foo, p=start,method=well[i])}
+                begin.time <-proc.time()
+		o <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])
+		time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
+                begin.time <-proc.time()
+		o <- optimx(foo, p=start,method=well[i])
+		time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
           
-		results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]),beta.bnd=c(lower$beta,upper$beta),delta.bnds=c(lower$delta,upper$delta))
+		results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]),beta.bnd=c(lower$beta,upper$beta),delta.bnds=c(lower$delta,upper$delta),time=time)
 
 		#o<-optim(foo, p=start, lower=lower, upper=upper, method="L")
 		
@@ -551,6 +557,8 @@ ouMatrix <- function(vcvMatrix, alpha)
     	
 
 require(optimx)
+
+##Geospiza Data
 #data(geospiza)
 #attach(geospiza)
 
@@ -560,26 +568,41 @@ require(optimx)
 #tree<- td$phy# Tree
 #n<- length(chdata)
 
+#Aquilegia Data
+require(ape)
 aqui.trait <- read.delim("Aquilegia-traits.txt", header=T)
 aqui.tree <- read.tree("Aquilegia.phy")
 
 td <- treedata(aqui.tree,aqui.trait[,2],sort=T)
 ntax=length(td$phy$tip.label)
-chdata<- aqui.trait[,2]# TIP data
+chdata<- aqui.trait[,3]# TIP data
 tree<- td$phy# Tree
 n<- length(chdata)
 
-l<-fitContinuous(tree,chdata,model="delta",bounds=list(delta=c(.003,40)))
+##Monocot Data
+#require(ape)
+#td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+#ntax=length(td$phy$tip.label)
+#chdata<- read.delim("BJO.monocot_GS")[,3] # TIP data
+#tree<- td$phy# Tree
+#n<- length(chdata)
+
+begin.time <-proc.time()
+l<-fitContinuous(td$phy,td$data,model="delta",bounds=list(delta=c(.0003,40)))
+
+#Time in minutes
+total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
+
 
 
 #Number of starting points
-n<-50
+n<-2
 #Max bound
-M<-700
+M<-500
 #Min bound
 m<-1
 #Start Value
-s <- 1.000001e-08
+s <- .000001
 #Lower Bound delta
 #dLB <- 0.001
 #Upper bound delta
@@ -603,41 +626,40 @@ for (i in c(1:length(optimx))){
 lt <- vector("list",length(optimx))
 names(lt) <- well
 
-fitContinuous.run<-function(){
-        k<-matrix(j,1,n)
-	k<-rbind(k,apply(k,2,function(x){
-            fitContinuous(tree,
-                          chdata,
-                          model="delta",
-                          bounds=list(delta=c(s,x),beta=c(s,x)))
-          }))
-        for (i in c(1:n)){
-                optimx[[1]][[i]] <- k[2,][[i]]$Trait1$spg
-                optimx[[2]][[i]] <- k[2,][[i]]$Trait1$Rcgmin
-                optimx[[3]][[i]] <- k[2,][[i]]$Trait1$Rvmmin
-                optimx[[4]][[i]] <- k[2,][[i]]$Trait1$bobyqa
-                optimx[[5]][[i]] <- k[2,][[i]]$Trait1$'L-BFGS-B'
-                optimx[[6]][[i]] <- k[2,][[i]]$Trait1$nlminb
-                optimx[[7]][[i]] <- k[2,][[i]]$Trait1$ucminf
-                optimx[[8]][[i]] <- k[2,][[i]]$Trait1$'Nelder-Mead'
-                optimx[[9]][[i]] <- k[2,][[i]]$Trait1$nlm
-                optimx[[10]][[i]] <- k[2,][[i]]$Trait1$CG
-                optimx[[11]][[i]] <- k[2,][[i]]$Trait1$BFGS
-                optimx[[12]][[i]] <- k[2,][[i]]$Trait1$newuoa}
-            for(j in c(1:length(optimx))){
-              if (well[j]==wellt[j]){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta)))),7,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}else{
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),NA,NA,x$beta,NA,NA,x$delta)))),7,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}}
-	return(lt)
-      }
+#fitContinuous.run<-function(){
+#        k<-matrix(j,1,n)
+#	k<-rbind(k,apply(k,2,function(x){
+#            fitContinuous(td$phy,td$data,
+#                          model="delta",
+#                          bounds=list(delta=c(s,x),beta=c(s,x)))
+#          }))
+#        for (i in c(1:n)){
+#                optimx[[1]][[i]] <- k[2,][[i]]$Trait1$spg
+#                optimx[[2]][[i]] <- k[2,][[i]]$Trait1$Rcgmin
+#                optimx[[3]][[i]] <- k[2,][[i]]$Trait1$Rvmmin
+#                optimx[[4]][[i]] <- k[2,][[i]]$Trait1$bobyqa
+#                optimx[[5]][[i]] <- k[2,][[i]]$Trait1$'L-BFGS-B'
+#                optimx[[6]][[i]] <- k[2,][[i]]$Trait1$nlminb
+#                optimx[[7]][[i]] <- k[2,][[i]]$Trait1$ucminf
+#                optimx[[8]][[i]] <- k[2,][[i]]$Trait1$'Nelder-Mead'
+#                optimx[[9]][[i]] <- k[2,][[i]]$Trait1$nlm
+#                optimx[[10]][[i]] <- k[2,][[i]]$Trait1$CG
+#                optimx[[11]][[i]] <- k[2,][[i]]$Trait1$BFGS
+#                optimx[[12]][[i]] <- k[2,][[i]]$Trait1$newuoa}
+#            for(j in c(1:length(optimx))){
+#              if (well[j]==wellt[j]){
+#                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta,x$time)))),8,ncol(k))))))
+#	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d","T")}else{
+#                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),NA,NA,x$beta,NA,NA,x$delta,x$time)))),8,ncol(k))))))
+#	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d","T")}}
+#	return(lt)
+#      }
 #This fitContinuous.run does not include beta bounds.
+
 fitContinuous.run<-function(){
         k<-matrix(j,1,n)
 	k<-rbind(k,apply(k,2,function(x){
-            fitContinuous(tree,
-                          chdata,
+            fitContinuous(td$phy,td$data,
                           model="delta",
                           bounds=list(delta=c(s,x)))
           }))
@@ -656,18 +678,18 @@ fitContinuous.run<-function(){
                 optimx[[12]][[i]] <- k[2,][[i]]$Trait1$newuoa}
             for(j in c(1:length(optimx))){
               if (well[j]==wellt[j]){
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta)))),7,ncol(k))))))
-              	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}else{
-                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),NA,NA,x$beta,NA,NA,x$delta)))),7,ncol(k))))))
-	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d")}}
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),as.numeric(x$beta.bnd[1]),as.numeric(x$beta.bnd[2]),x$beta,as.numeric(x$delta.bnd[1]),as.numeric(x$delta.bnd[2]),x$delta,x$time)))),8,ncol(k))))))
+              	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d","time")}else{
+                lt[[j]]<-as.data.frame(t(rbind(unlist(k[1,]),as.data.frame(matrix(unlist(lapply(optimx[[j]],function(x) return(c(as.numeric(x$lnl),NA,NA,x$beta,NA,NA,x$delta,x$time)))),8,ncol(k))))))
+	        colnames(lt[[j]])<-c("I","L","bLB","bUB","b","dLB","dUB","d","time")}}
 	return(lt)
       }
 
 begin.time <-proc.time()
-l2<-fitContinuous.run()
+l<-fitContinuous.run()
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-#save.image("/home/michels/repository/phylooptim/pkg/R/geiger/aquigeigererror.RData")
 save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/geiger/aquigeigererror.RData")
+#save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/geiger/aquigeigererror.RData")
