@@ -588,7 +588,7 @@ n<- length(chdata)
 #n<- length(chdata)
 
 begin.time <-proc.time()
-l<-fitContinuous(td$phy,td$data,model="delta",bounds=list(delta=c(.0003,40)))
+l<-fitContinuous(td$phy,td$data,model="delta",bounds=list(delta=c(.0003,2)))
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
@@ -596,13 +596,13 @@ total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
 
 #Number of starting points
-n<-2
+n<-30
 #Max bound
 M<-500
 #Min bound
-m<-1
+m<-2
 #Start Value
-s <- .000001
+s <- .0003
 #Lower Bound delta
 #dLB <- 0.001
 #Upper bound delta
