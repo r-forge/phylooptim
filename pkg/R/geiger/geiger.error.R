@@ -120,9 +120,9 @@ names(obj.list)<-well
 
 	#----- MINIMIZE NEGATIVE LOG LIKELIHOOD
 	
-	beta.start<-var(ds$data)/max(branching.times(ds$tree))
+	#beta.start<-var(ds$data)/max(branching.times(ds$tree))
         #For monocot Data
-        #beta.start <- 0.1
+        beta.start <- 0.1
 
 	out         <- NULL
 	
@@ -275,10 +275,18 @@ names(obj.list)<-well
                 print(start)
 if (well[i]==wellt[i]){
                 begin.time <-proc.time()
-		o <- optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i])
+		o <- tryCatch(optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i]), error=function(x){
+                                                               x$fvalues$fvalues <- NA
+                                                               x$par$par[1] <- NA
+                                                               x$par$par[2] <- NA
+                                                               return(x)})
 		time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
                 begin.time <-proc.time()
-		o <- optimx(foo, p=start,method=well[i])
+		o <- tryCatch(optimx(foo, p=start,method=well[i]), error=function(x){
+                                                               x$fvalues$fvalues <- NA
+                                                               x$par$par[1] <- NA
+                                                               x$par$par[2] <- NA
+                                                               return(x)})
 		time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
           
 		results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]),beta.bnd=c(lower$beta,upper$beta),delta.bnds=c(lower$delta,upper$delta),time=time)
@@ -568,27 +576,30 @@ require(optimx)
 #tree<- td$phy# Tree
 #n<- length(chdata)
 
-#Aquilegia Data
-require(ape)
-aqui.trait <- read.delim("Aquilegia-traits.txt", header=T)
-aqui.tree <- read.tree("Aquilegia.phy")
-
-td <- treedata(aqui.tree,aqui.trait[,2],sort=T)
-ntax=length(td$phy$tip.label)
-chdata<- aqui.trait[,3]# TIP data
-tree<- td$phy# Tree
-n<- length(chdata)
-
-##Monocot Data
+##Aquilegia Data
 #require(ape)
-#td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+#aqui.trait <- read.delim("Aquilegia-traits.txt", header=T)
+#aqui.tree <- read.tree("Aquilegia.phy")
+
+#td <- treedata(aqui.tree,aqui.trait[,2],sort=T)
 #ntax=length(td$phy$tip.label)
-#chdata<- read.delim("BJO.monocot_GS")[,3] # TIP data
+#chdata<- aqui.trait[,3]# TIP data
 #tree<- td$phy# Tree
 #n<- length(chdata)
 
+#Monocot Data
+require(ape)
+td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+ntax=length(td$phy$tip.label)
+chdata<- read.delim("BJO.monocot_GS")[,3] # TIP data
+tree<- td$phy# Tree
+n<- length(chdata)
+
+x1range<-seq(-15,10,length.out=100) #beta
+x2range<-seq(-5,8,length.out=100) #delta
+
 begin.time <-proc.time()
-l<-fitContinuous(td$phy,td$data,model="delta",bounds=list(delta=c(.0003,2)))
+l<-fitContinuous(td$phy,td$data,model="delta",bounds=list(delta=c(.0003,40)))
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
