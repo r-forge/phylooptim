@@ -19,7 +19,7 @@
 
 ace <- function(x, phy, type = "continuous", method = "ML", CI = TRUE,
                 model = if (type == "continuous") "BM" else "ER",
-                scaled = TRUE, kappa = 1, corStruct = NULL, ip = 0.1)
+                scaled = TRUE, kappa = 1, corStruct = NULL, ip = 0.1) 
 {
     if (!inherits(phy, "phylo"))
         stop('object "phy" is not of class "phylo".')
@@ -35,7 +35,7 @@ ace <- function(x, phy, type = "continuous", method = "ML", CI = TRUE,
     if (!is.null(names(x))) {
         if(all(names(x) %in% phy$tip.label))
           x <- x[phy$tip.label]
-        else warning("the names of 'x' and the tip labels of the tree do not match: the former were ignored in the analysis.")
+        else warning("the names of 'x' and the tip labels of the tree do not match: the former wfere ignored in the analysis.")
     }
 
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
@@ -43,7 +43,6 @@ well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Neld
 obj.list <- vector("list", length(well))
 names(obj.list)<-well
 
-  for (i in c(1:length(well))){
     obj <- list()
     if (kappa != 1) phy$edge.length <- phy$edge.length^kappa
     if (type == "continuous") {
@@ -229,16 +228,23 @@ names(obj.list)<-well
             dev <- -2 * sum(log(comp[-TIPS]))
             if (is.na(dev)) Inf else dev
         }
-
-if (well[i]==wellt[i]){
+      }
+for (i in c(1:length(well))){
+  if (well[i]==wellt[i]){
         begin.time <-proc.time()
-        out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
+        out <- tryCatch(optimx(function(p) dev(p), p=rep(ip, length.out = np),
                       lower = rep(0, np), upper = rep(1e50, np),
-                      method=well[i])
+                      method=well[i]), error=function(x){
+                                                         x$fvalues$fvalues <- NA
+                                                         x$par$par <- NA
+                                                         return(x)})
         lb <- 0;ub <- 1e50;time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
         begin.time <-proc.time()
-        out <- optimx(function(p) dev(p), p=rep(ip, length.out = np),
-                      method=well[i])
+        out <- tryCatch(optimx(function(p) dev(p), p=rep(ip, length.out = np),
+                      method=well[i]), error=function(x){
+                                                         x$fvalues$fvalues <- NA
+                                                         x$par$par <- NA
+                                                         return(x)})
 	time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
 
         obj$time <- time
@@ -260,13 +266,13 @@ if (well[i]==wellt[i]){
             obj$lik.anc <- dev(obj$rates, TRUE)
             colnames(obj$lik.anc) <- lvls
         }
-    }
     obj$call <- match.call()
     class(obj) <- "ace"
     obj.list[[i]]<-obj
 }
 obj.list
 }
+
 
 logLik.ace <- function(object, ...) object$loglik
 
@@ -345,10 +351,10 @@ library(optimx)
 ##For Monocot data
 require(ape)
 require(geiger)
-dv <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+dv <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,4],sort=T)
 
 begin.time <- proc.time()
-l1 <- ace(dv$data,dv$phy,type='discrete',ip=3)
+l1 <- ace(as.numeric(dv$data),dv$phy,type='discrete',ip=1,CI=FALSE)
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
@@ -357,8 +363,8 @@ total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
 #Number of starting points
 m<- 50
-#j<-seq(from=1/100, to=10, length.out=m)
-j<-seq(from=0.72, to=4.31, length.out=m)
+j<-seq(from=1/100, to=20, length.out=m)
+#j<-seq(from=0.72, to=4.31, length.out=m)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 optimx <- vector("list", length(well))
@@ -374,7 +380,7 @@ names(lt) <- well
 
 ace.run<-function(){
         k<-matrix(j,1,m)
-	k<-rbind(k,apply(k,2,function(x) {ace(dv$data,dv$phy,type='discrete',ip=x)}))
+	k<-rbind(k,apply(k,2,function(x) {ace(dv$data,dv$phy,type='discrete',ip=x,CI=FALSE)}))
             for (i in c(1:m)){
                 optimx[[1]][[i]] <- k[2,][[i]]$spg
                 optimx[[2]][[i]] <- k[2,][[i]]$Rcgmin
@@ -403,4 +409,4 @@ l<-ace.run()
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ace/aquiaceerror.RData")
+save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ace/monoaceerror.RData")
