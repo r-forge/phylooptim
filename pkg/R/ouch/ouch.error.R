@@ -154,7 +154,7 @@ names(out)<-well
   for (i in c(1:length(out))){
     if (well[i]==wellt[i]){
         begin.time <-proc.time()
-	out[[i]][[1]] <- optimx(
+	out[[i]][[1]] <- tryCatch(optimx(
                       fn = function (par) {
                      ou.lik.fn(
                                tree=tree,
@@ -167,10 +167,13 @@ names(out)<-well
                       p=c(sqrt.alpha,sigma),
                       lower = rep(0.001,(nalpha+nsigma)), upper = rep(1e50,(nalpha+nsigma)),
                       method=well[i]
-                      )
+                      ), error=function(x){
+                                           x$par[seq(nalpha)] <- NA
+                                           x$par[nalpha+seq(nsigma)] <- NA
+                                           return(x)})
         out[[i]][[2]] <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
         begin.time <-proc.time()
-	out[[i]][[1]] <- optimx(
+	out[[i]][[1]] <- tryCatch(optimx(
                       fn = function (par) {
                      ou.lik.fn(
                                tree=tree,
@@ -182,7 +185,10 @@ names(out)<-well
                    }, 
                       p=c(sqrt.alpha,sigma),
                       method=well[i]
-                      )
+                      ), error=function(x){
+                                           x$par[seq(nalpha)] <- NA
+                                           x$par[nalpha+seq(nsigma)] <- NA
+                                           return(x)})
         out[[i]][[2]] <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
 }
 
