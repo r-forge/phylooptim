@@ -1,5 +1,9 @@
 require(ouch)
 
+source("ouch.wrap.R")
+
+source("ouch.wrap.x.R")
+
 rm(hansen)
 
 setClass(
@@ -451,62 +455,28 @@ require(optimx)
 ##For geospiza data
 #require(geiger)
 #data(geospiza)
-#str(geospiza)
 #sapply(geospiza,class)
 #nc <- with(geospiza,name.check(geospiza.tree,geospiza.data))
 #tree <- with(geospiza,drop.tip(geospiza.tree,nc$Tree.not.data))
-#dat <- geospiza$geospiza.data
-#ot <- ape2ouch(tree)
-#otd <- as(ot,"data.frame")
-#dat$labels <- rownames(dat)
-#otd <- merge(otd,dat,by="labels",all=TRUE)
-#rownames(otd) <- otd$nodes
-#ot <- with(otd,ouchtree(nodes=nodes,ancestors=ancestors,times=times,labels=labels))
-#otd$regimes <- as.factor("global")
+#trait <- data.frame(taxa=rownames(geospiza$geospiza.data),geospiza$geospiza.data)
+#ouch.wrap(tree,trait,model=c("ou1"))
 
-#h1 <- hansen(
-#             tree=ot,
-#             data=otd["wingL"],
-#             regimes=otd["regimes"],
-#             sqrt.alpha=.1,
-#             sigma=.1
-#             )
-#summary(h1)
+##For aquilegia data
+#tree<-read.tree("Aquilegia.new.tre")
+#trait<-read.delim("Aquilegia.traits")
+#ouch.wrap(tree,trait,model=c("ou1"))
 
-#For aquilegia data
-require(ape)
-aquilegia <- vector("list",2)
-aquilegia[[1]] <- read.tree("Aquilegia.phy")
-ddd <- read.delim("Aquilegia-traits.txt", header=T)
-dd <- ddd[,2]
-ee <- ddd[,3]
-d <- as.numeric(dd)
-e <- as.numeric(ee)
-aquilegia[[2]] <- data.frame(T1=d,T2=e)
-rownames(aquilegia[[2]]) <- read.delim("Aquilegia-traits.txt", header=T)[,1]
-names(aquilegia) <- c("aquilegia.tree","aquilegia.data")
-sapply(aquilegia,class)
-tree <- with(aquilegia,aquilegia.tree)
-dat <- aquilegia$aquilegia.data
-ot <- ape2ouch(tree)
-otd <- as(ot,"data.frame")
-dat$labels <- rownames(dat)
-otd <- merge(otd,dat,by="labels",all=TRUE)
-rownames(otd) <- otd$nodes
-ot <- with(otd,ouchtree(nodes=nodes,ancestors=ancestors,times=times,labels=labels))
-otd$regimes <- as.factor("global")
+#For Monocot Data
+tree<-read.tree("BJO.Monocot.tre")
+trait<-read.delim("BJO.monocot_GS")
 
-h1 <- hansen(
-             tree=ot,
-             data=otd[c("T1")],
-             regimes=otd["regimes"],
-             sqrt.alpha=c(.1),
-             sigma=c(.1)
-             )
-summary(h1)
+begin.time <-proc.time()
+l <- ouch.wrap(tree,trait,model=c("ou1"))
+total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
+#what?
 
 #Number of starting points
-m<- 40
+m<- 4
 j<-seq(from=.01, to=4, length.out=m)
 wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
@@ -525,14 +495,7 @@ for (i in c(1:length(optimx))){time[[i]] <- rep(NA,m)}
 
 hansen.run<-function(){
         k<-matrix(j,1,m)
-	k<-rbind(k,apply(k,2,function(x){
-          hansen(
-                 tree=ot,
-                 data=otd[c("T1")],
-                 regimes=otd["regimes"],
-                 sqrt.alpha=c(x),
-                 sigma=c(x)
-                )}))
+	k<-rbind(k,apply(k,2,function(x){ouch.wrap.x(tree,trait,model=c("ou1"),x)}))
          for (i in c(1:length(optimx))){for (j in c(1:m)){optimx[[i]][[j]] <- k[2,][[j]][[i]][[1]];time[[i]][j] <- k[2,][[j]][[i]][[2]]}}
          for(j in c(1:length(optimx))){
               if (well[j]==wellt[j]){
@@ -544,10 +507,11 @@ hansen.run<-function(){
 	return(lt)
       }
 
-begin.time <-proc.time()
-l<-hansen.run()
 
-#Time in minutes
-total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ouch/aquioucherror.RData")
+
+
+#save.image("/home/michels/repository/phylooptim/pkg/R/ouch/geooucherror.RData")
+#save.image("/home/michels/repository/phylooptim/pkg/R/ouch/aquioucherror.RData")
+save.image("/Users/michels/phylooptim/pkg/R/ouch/monooucherror.RData")
+#save.image("/home/michels/repository/phylooptim/pkg/R/ouch/monooucherror.RData")
