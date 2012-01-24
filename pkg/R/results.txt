@@ -15,6 +15,10 @@ aquilegia
        spg Rcgmin Rvmmin bobyqa L-BFGS-B nlminb ucminf Nelder-Mead nlm CG BFGS newuoa
 geiger --  --     --     --     --       Y      Y      --          --  -- --   Y
 ace    Y   Y      Y      Y      Y        Y      Y      O           Y   Y  Y    Y
-ouch   Y   --     --     Y      --       Y      Y      O           --  -- --   Y
+ouch   Y   --     --     Y      --       Y      Y      --          --  -- --   Y  
 
-
+monocot
+       spg Rcgmin Rvmmin bobyqa L-BFGS-B nlminb ucminf Nelder-Mead nlm CG BFGS newuoa
+geiger --  --     NA     Y      Y        Y      Y      --          --  Y  Y    --   
+ace    Y   Y      NA     --     --       --     --     O           --  -- --   --
+ouch   Y   --     NA     Y      Y        Y      --     O           --  -- --   Y 
