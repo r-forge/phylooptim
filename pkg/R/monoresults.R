@@ -7,8 +7,9 @@ l <- NULL
 ace$mean_lik <- round(c(mean(ace[[1]][,5]),mean(ace[[2]][,5]),mean(ace[[3]][,5]),mean(ace[[4]][,5]),mean(ace[[5]][,5]),mean(ace[[6]][,5]),mean(ace[[7]][,5]),mean(ace[[8]][,5]),mean(ace[[9]][,5]),mean(ace[[10]][,5]),mean(ace[[11]][,5]),mean(ace[[12]][,5])),5)
 names(ace$mean_lik) <- names(ace)[1:12]
 
-load("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/geiger/monogeigererror.RData")
-geiger <- optx
+load("/home/michels/repository/phylooptim/pkg/R/geiger/monogeigererror.RData")
+geiger <- l
+l <- NULL
 geiger$mean_lik <- round(c(mean(as.numeric(geiger[[11]][,1])),mean(as.numeric(geiger[[9]][,1])),mean(as.numeric(geiger[[10]][,1])),mean(as.numeric(geiger[[2]][,1])),mean(as.numeric(geiger[[4]][,1])),mean(as.numeric(geiger[[8]][,1])),mean(as.numeric(geiger[[12]][,1])),mean(as.numeric(geiger[[5]][,1])),mean(as.numeric(geiger[[7]][,1])),mean(as.numeric(geiger[[3]][,1])),mean(as.numeric(geiger[[1]][,1])),mean(as.numeric(geiger[[6]][,1]))),5)
 names(geiger$mean_lik) <- names(ace)[1:12]
 
