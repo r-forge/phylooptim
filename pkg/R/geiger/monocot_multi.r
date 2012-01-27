@@ -27,7 +27,7 @@ well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Neld
 #Input the following, the function will automatically find the number of cores but if you want to use a specific number of cores enter yourself.
 #N <- detectCores()                       #Number of cores
 N <- 22
-it <- 50  	                         #Number of iterations
+it <- 1  	                         #Number of iterations
 z <- length(well)                        #Number of optimizers
 MIN=2                                    #min upper value
 MAX=500                                  #max upper value
@@ -63,9 +63,10 @@ numcol<-50 #number of colors to use
 precision=100 #Number of points per variable to compute
 plot3d=FALSE #Surface plot. Note, doesn't work if part of the surface to be plotted is undefined
 
-td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+#td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+td <- treedata(read.nexus("mammalChar1.nex"),read.csv("mammalChar1.csv", row.names=1),sort=T)
 ntax=length(td$phy$tip.label)
-chdata<- read.delim("BJO.monocot_GS")[,3] # TIP data
+chdata<- td$data # TIP data
 tree<- td$phy# Tree
 n<- length(chdata)
 
