@@ -551,6 +551,39 @@ for(j in c(1:length(optimx))){
 return(lt)
 }
 
+#Required to run this part.
+require(ouch)
+require(optimx)
+require(geiger)
+load("ouchbackup.RData")
+
+#Default inputs, if you want more iterations, change it, then rerun this piece of code.
+M <- 22
+it <- 50  	                         #Number of iterations
+z <- length(well)                        #Number of optimizers
+MIN=0.01                                 #min upper value
+MAX=10                                   #max upper value
+strt <- seq(MIN,MAX,length=it)           #Start values
+
+N <- min(M,it)
+a <- ceiling(it / N)
+h <- 1
+m <- 1
+v <- vector("list",N)
+for (b in c(1:N)){v[[b]]<-matrix(NA,nrow=a,ncol=1)}
+for (d in c(1:a)){
+  for (j in c(1:N)){
+    if (m > it*z) {break}else{
+    if (h <= 12){
+      if (j < N ){v[[j]][d] <- c(strt[m]);h <- h+1;m <- m+1}else{v[[j]][d] <- c(strt[m]);h<-h+1;m <- m+1;next}
+                 }else{
+      h <- 1
+      if (j < N ){v[[j]][d] <- c(strt[m]);h <- h+1;m <- m+1}else{v[[j]][d] <- c(strt[m]);h<-h+1;m <- m+1;next}}}
+  }
+}
+
+for (b in c(1:N)){v[[b]] <- na.omit(v[[b]])}
+
 require(multicore)
 b.time <-proc.time()
 jobs <- lapply(v, function(x) parallel(f(x),silent=TRUE))
