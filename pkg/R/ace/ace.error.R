@@ -353,7 +353,7 @@ library(optimx)
 #require(geiger)
 #dv <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,4],sort=T)
 
-##For Monocot data
+##For Mammal data
 require(ape)
 require(geiger)
 tree <- read.nexus("mammalChar4.nex")
@@ -414,4 +414,4 @@ l<-ace.run()
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
 
-save.image("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ace/monoaceerror.RData")
+save.image("/home/michels/repository/phylooptim/pkg/R/ace/mamaceerror.RData")
