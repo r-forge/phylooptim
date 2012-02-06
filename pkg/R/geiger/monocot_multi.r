@@ -25,13 +25,14 @@ well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Neld
 #    NA_integer_
 #}
 #Input the following, the function will automatically find the number of cores but if you want to use a specific number of cores enter yourself.
-#N <- detectCores()                       #Number of cores
-N <- 22
-it <- 1  	                         #Number of iterations
+#M <- detectCores()                       #Number of cores
+M <- 22
+it <- 50  	                         #Number of iterations
 z <- length(well)                        #Number of optimizers
 MIN=2                                    #min upper value
 MAX=500                                  #max upper value
 ub <- seq(MIN,MAX,length=it)             #Random beta start values
+N <- min(it*z,M)
 
 bb <- unlist(lapply(ub, function(x) rep(x,z)))
 a <- ceiling(it*z / N)
@@ -64,15 +65,17 @@ precision=100 #Number of points per variable to compute
 plot3d=FALSE #Surface plot. Note, doesn't work if part of the surface to be plotted is undefined
 
 #td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
-td <- treedata(read.nexus("mammalChar1.nex"),read.csv("mammalChar1.csv", row.names=1),sort=T)
+tree <- read.nexus("mammalChar1.nex")
+tree$edge.length[tree$edge.length<1e-5]=1e-5
+td <- treedata(tree,read.csv("mammallogChar1.csv", row.names=1),sort=T)
 ntax=length(td$phy$tip.label)
-chdata<- td$data # TIP data
+chdata <- read.csv("mammallogChar1.csv")[,2]
 tree<- td$phy# Tree
 n<- length(chdata)
 
 #----- MINIMIZE NEGATIVE LOG LIKELIHOOD
 
-start=log(c(0.1, 1.5))
+start=log(c(1.5, 0.1))
 
 k<-3
 
@@ -112,10 +115,6 @@ foo<-function(x) {
 	-dmvnorm(chdata, mu, vv, log=T)
 }
 
-dplot<-TRUE
-foostore=list(x1=NULL,x2=NULL)
-  print(start)
-
 f <- function(x)
 { 
 y <- x[,1]
@@ -124,7 +123,7 @@ cow <- as.numeric(x[,2])
 obj.list <- vector("list", length(y))
 names(obj.list)<-y
 
-po <- seq(1,12,by=1)
+po <- seq(1,length(well),by=1)
 w <- vector("list",length(y))
 for (b in c(1:length(y))){w[[b]]<-rep(NA,length(well))}
 for (i in c(1:length(y))){
@@ -203,11 +202,22 @@ upper=log(bounds[2,c("beta","delta")])
 return(obj.list)
 }
 
+save.image("/home/michels/repository/phylooptim/pkg/R/geiger/geigerbackup.RData")
+
+#Run this
+require(geiger)
+require(optimx)
+require(ape)
 require(multicore)
-begin.time <-proc.time()
+load("geigerbackup.RData")
+dplot<-TRUE
+foostore=list(x1=NULL,x2=NULL)
+  print(start)
+
+b.time <-proc.time()
 jobs <- lapply(v, function(x) parallel(f(x),silent=TRUE))
 results <- collect(jobs,wait=TRUE)
-total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
+total.time <- as.numeric(proc.time()[3]-b.time[3])/(60)
 #what?
 
 lt <- vector("list",length(well))
@@ -224,14 +234,14 @@ for (i in c(1:length(lt))){
     ff[i,j] <- lt[[i]][j]}}
 ff <- ff[order(ff$name,ff$dUB) , ]
 
-optx <- vector("list",length(well))
-names(optx) <- c("BFGS","bobyqa","CG","L-BFGS-B","Nelder-Mead","newuoa","nlm","nlminb","Rcgmin","Rvmmin","spg","ucminf")
+l <- vector("list",length(well))
+names(l) <- c("BFGS","bobyqa","CG","L-BFGS-B","Nelder-Mead","newuoa","nlm","nlminb","Rcgmin","Rvmmin","spg","ucminf")
 
 aa <- seq(1,it*z,by=it)
 bb <- seq(aa[2]-1,it*z,by=it)
-for (i in c(1:length(aa))){optx[[i]] <- ff[aa[i]:bb[i],2:9]}
+for (i in c(1:length(aa))){l[[i]] <- ff[aa[i]:bb[i],2:9]}
 
-save.image("/Users/michels/phylooptim/pkg/R/geiger/monogeigererror.RData")
+save.image("/Users/michels/phylooptim/pkg/R/geiger/mamgeigererror.RData")
 
 #po <- seq(1,12,by=1)
 #w <- vector("list",N)
