@@ -19,6 +19,12 @@ ouch   Y   --     --     Y      --       Y      Y      --          --  -- --   Y
 
 monocot
        spg Rcgmin Rvmmin bobyqa L-BFGS-B nlminb ucminf Nelder-Mead nlm CG BFGS newuoa
-geiger --  --     NA     Y      Y        Y      Y      --          --  Y  Y    --   
+geiger --  --     --     Y      Y        Y      Y      --          --  Y  Y    --  
 ace    Y   Y      NA     --     --       --     --     O           --  -- --   --
-ouch   Y   --     NA     Y      Y        Y      --     O           --  -- --   Y 
+ouch   Y   --     --     Y      Y        Y      --     O           --  -- --   Y  
+
+mammal
+       spg Rcgmin Rvmmin bobyqa L-BFGS-B nlminb ucminf Nelder-Mead nlm CG BFGS newuoa
+geiger Y   --     --     Y      Y        Y      Y      Y           --  Y  Y    Y 
+ace    --  --     NA     --     --       --     --     Y           --  -- --   --   
+ouch   Y   --     --     Y      --       Y      Y      O           --  -- --   Y  
