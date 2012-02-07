@@ -473,47 +473,6 @@ well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Neld
 #    NA_integer_
 #}
 #Input the following, the function will automatically find the number of cores but if you want to use a specific number of cores enter yourself.
-#N <- detectCores()                       #Number of cores
-N <- 22
-it <- 4  	                         #Number of iterations
-z <- length(well)                        #Number of optimizers
-MIN=0.01                                 #min upper value
-MAX=10                                   #max upper value
-strt <- seq(MIN,MAX,length=it)           #Start values
-
-a <- ceiling(it / N)
-h <- 1
-m <- 1
-v <- vector("list",N)
-for (b in c(1:N)){v[[b]]<-matrix(NA,nrow=a,ncol=1)}
-for (d in c(1:a)){
-  for (j in c(1:N)){
-    if (m > it*z) {break}else{
-    if (h <= 12){
-      if (j < N ){v[[j]][d] <- c(strt[m]);h <- h+1;m <- m+1}else{v[[j]][d] <- c(strt[m]);h<-h+1;m <- m+1;next}
-                 }else{
-      h <- 1
-      if (j < N ){v[[j]][d] <- c(strt[m]);h <- h+1;m <- m+1}else{v[[j]][d] <- c(strt[m]);h<-h+1;m <- m+1;next}}}
-  }
-}
-
-for (b in c(1:N)){v[[b]] <- na.omit(v[[b]])}
-
-#Mammal Data
-require(optimx)
-require(geiger)
-tree<-read.nexus("mammalChar1.nex")
-tree$edge.length[tree$edge.length<1e-5]=1e-5
-trait <- read.csv("mammallogChar1.csv")
-trait1 <- read.csv("mammallogChar1.csv", row.names=1)
-nc <- name.check(tree,trait1)
-tree <- drop.tip(tree,nc$Tree.not.data)
-#ouch.wrap(tree,trait,model=c("ou1"))
-
-begin.time <-proc.time()
-l <- ouch.wrap.new(tree,trait,model=c("ou1"))
-total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
-#what?
 
 f <- function(x)
 { 
@@ -558,14 +517,14 @@ require(geiger)
 load("ouchbackup.RData")
 
 #Default inputs, if you want more iterations, change it, then rerun this piece of code.
-M <- 22
-it <- 50  	                         #Number of iterations
+#N <- detectCores()                       #Number of cores
+N <- 22
+it <- 4  	                         #Number of iterations
 z <- length(well)                        #Number of optimizers
 MIN=0.01                                 #min upper value
 MAX=10                                   #max upper value
 strt <- seq(MIN,MAX,length=it)           #Start values
 
-N <- min(M,it)
 a <- ceiling(it / N)
 h <- 1
 m <- 1
@@ -583,6 +542,22 @@ for (d in c(1:a)){
 }
 
 for (b in c(1:N)){v[[b]] <- na.omit(v[[b]])}
+
+#Mammal Data
+require(optimx)
+require(geiger)
+tree<-read.nexus("mammalChar1.nex")
+tree$edge.length[tree$edge.length<1e-5]=1e-5
+trait <- read.csv("mammallogChar1.csv")
+trait1 <- read.csv("mammallogChar1.csv", row.names=1)
+nc <- name.check(tree,trait1)
+tree <- drop.tip(tree,nc$Tree.not.data)
+#ouch.wrap(tree,trait,model=c("ou1"))
+
+begin.time <-proc.time()
+l <- ouch.wrap.new(tree,trait,model=c("ou1"))
+total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
+#what?
 
 require(multicore)
 b.time <-proc.time()
