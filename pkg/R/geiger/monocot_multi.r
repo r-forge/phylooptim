@@ -26,32 +26,6 @@ well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Neld
 #}
 #Input the following, the function will automatically find the number of cores but if you want to use a specific number of cores enter yourself.
 #M <- detectCores()                       #Number of cores
-M <- 22
-it <- 50  	                         #Number of iterations
-z <- length(well)                        #Number of optimizers
-MIN=2                                    #min upper value
-MAX=500                                  #max upper value
-ub <- seq(MIN,MAX,length=it)             #Random beta start values
-N <- min(it*z,M)
-
-bb <- unlist(lapply(ub, function(x) rep(x,z)))
-a <- ceiling(it*z / N)
-h <- 1
-m <- 1
-v <- vector("list",N)
-for (b in c(1:N)){v[[b]]<-matrix(NA,nrow=a,ncol=2)}
-for (d in c(1:a)){
-  for (j in c(1:N)){
-    if (m > it*z) {break}else{
-    if (h <= 12){
-      if (j < N ){v[[j]][d,] <- c(well[h],bb[m]);h <- h+1;m <- m+1}else{v[[j]][d,] <- c(well[h],bb[m]);h<-h+1;m <- m+1;next}
-                 }else{
-      h <- 1
-      if (j < N ){v[[j]][d,] <- c(well[h],bb[m]);h <- h+1;m <- m+1}else{v[[j]][d,] <- c(well[h],bb[m]);h<-h+1;m <- m+1;next}}}
-  }
-}
-
-for (b in c(1:N)){v[[b]] <- na.omit(v[[b]])}
 
 require(geiger)
 require(optimx)
@@ -63,19 +37,6 @@ badLnL=1000 #Value returned when the function to optimize is undefined
 numcol<-50 #number of colors to use
 precision=100 #Number of points per variable to compute
 plot3d=FALSE #Surface plot. Note, doesn't work if part of the surface to be plotted is undefined
-
-#td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
-tree <- read.nexus("mammalChar1.nex")
-tree$edge.length[tree$edge.length<1e-5]=1e-5
-td <- treedata(tree,read.csv("mammallogChar1.csv", row.names=1),sort=T)
-ntax=length(td$phy$tip.label)
-chdata <- read.csv("mammallogChar1.csv")[,2]
-tree<- td$phy# Tree
-n<- length(chdata)
-
-#----- MINIMIZE NEGATIVE LOG LIKELIHOOD
-
-start=log(c(1.5, 0.1))
 
 k<-3
 
@@ -205,6 +166,46 @@ return(obj.list)
 save.image("/home/michels/repository/phylooptim/pkg/R/geiger/geigerbackup.RData")
 
 #Run this
+M <- 22
+it <- 50  	                         #Number of iterations
+z <- length(well)                        #Number of optimizers
+MIN=2                                    #min upper value
+MAX=500                                  #max upper value
+ub <- seq(MIN,MAX,length=it)             #Random beta start values
+N <- min(it*z,M)
+
+bb <- unlist(lapply(ub, function(x) rep(x,z)))
+a <- ceiling(it*z / N)
+h <- 1
+m <- 1
+v <- vector("list",N)
+for (b in c(1:N)){v[[b]]<-matrix(NA,nrow=a,ncol=2)}
+for (d in c(1:a)){
+  for (j in c(1:N)){
+    if (m > it*z) {break}else{
+    if (h <= 12){
+      if (j < N ){v[[j]][d,] <- c(well[h],bb[m]);h <- h+1;m <- m+1}else{v[[j]][d,] <- c(well[h],bb[m]);h<-h+1;m <- m+1;next}
+                 }else{
+      h <- 1
+      if (j < N ){v[[j]][d,] <- c(well[h],bb[m]);h <- h+1;m <- m+1}else{v[[j]][d,] <- c(well[h],bb[m]);h<-h+1;m <- m+1;next}}}
+  }
+}
+
+for (b in c(1:N)){v[[b]] <- na.omit(v[[b]])}
+
+#td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+tree <- read.nexus("mammalChar1.nex")
+tree$edge.length[tree$edge.length<1e-5]=1e-5
+td <- treedata(tree,read.csv("mammallogChar1.csv", row.names=1),sort=T)
+ntax=length(td$phy$tip.label)
+chdata <- read.csv("mammallogChar1.csv")[,2]
+tree<- td$phy# Tree
+n<- length(chdata)
+
+#----- MINIMIZE NEGATIVE LOG LIKELIHOOD
+
+start=log(c(1.5, 0.1))
+
 require(geiger)
 require(optimx)
 require(ape)
