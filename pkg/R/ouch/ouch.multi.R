@@ -601,7 +601,7 @@ load("mamoucherror.RData")
 
 l <- vector("list",length(well))
 names(l) <- well
-for (i in c(1:length(well))){l[[i]] <- matrix(NA,ncol=8,nrow=N);colnames(l[[i]]) <- c("I","lb","ub","T","L","S","A","time")}
+for (i in c(1:length(well))){l[[i]] <- matrix(NA,ncol=8,nrow=N);names(l[[i]]) <- c("I","lb","ub","T","L","S","A","time")}
 
 for (i in c(1:N)){for (j in c(1:length(well))){l[[j]][i,] <- as.numeric(results[[i]][[j]][1,])}}
 
