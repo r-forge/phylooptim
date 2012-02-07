@@ -596,3 +596,17 @@ total.time <- as.numeric(proc.time()[3]-b.time[3])/(60)
 #save.image("/Users/michels/phylooptim/pkg/R/ouch/monooucherror.RData")
 save.image("/Users/michels/phylooptim/pkg/R/ouch/mamoucherror.RData")
 #save.image("/home/michels/repository/phylooptim/pkg/R/ouch/monooucherror.RData")
+
+load("mamoucherror.RData")
+
+l <- vector("list",length(well))
+names(l) <- well
+for (i in c(1:length(well))){l[[i]] <- matrix(NA,ncol=8,nrow=N);colnames(l[[i]]) <- c("I","lb","ub","T","L","S","A","time")}
+
+for (i in c(1:N)){for (j in c(1:length(well))){l[[j]][i,] <- as.numeric(results[[i]][[j]][1,])}}
+
+save.image("/home/michels/repository/phylooptim/pkg/R/ouch/mamoucherror.RData")
+
+#save.image("/Users/michels/phylooptim/pkg/R/geiger/mamoucherror.RData")
+
+#save.image("/Users/omearalabguest/phylooptim/pkg/R/geiger/mamoucherror.RData")
