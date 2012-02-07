@@ -243,6 +243,8 @@ for (i in c(1:length(aa))){l[[i]] <- ff[aa[i]:bb[i],2:9]}
 
 save.image("/Users/michels/phylooptim/pkg/R/geiger/mamgeigererror.RData")
 
+save.image("/Users/omearalabguest/phylooptim/pkg/R/geiger/mamgeigererror.RData")
+
 #po <- seq(1,12,by=1)
 #w <- vector("list",N)
 #for (a in c(1:N)){w[[a]] <- vector("list",length(v[[a]]))}
