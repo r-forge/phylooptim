@@ -1,19 +1,19 @@
 require(gplots)
 
-#Results for aquilegia data
-load("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ace/monoaceerror.RData")
+#Results for Monocot data
+load("/home/michels/repository/phylooptim/pkg/R/geiger/monogeigererror.RData")
+geiger <- l
+l <- NULL
+geiger$mean_lik <- round(c(mean(as.numeric(geiger[[1]][,1])),mean(as.numeric(geiger[[2]][,1])),mean(as.numeric(geiger[[3]][,1])),mean(as.numeric(geiger[[4]][,1])),mean(as.numeric(geiger[[5]][,1])),mean(as.numeric(geiger[[6]][,1])),mean(as.numeric(geiger[[7]][,1])),mean(as.numeric(geiger[[8]][,1])),mean(as.numeric(geiger[[9]][,1])),mean(as.numeric(geiger[[10]][,1])),mean(as.numeric(geiger[[11]][,1])),mean(as.numeric(geiger[[12]][,1]))),5)
+names(geiger$mean_lik) <- names(geiger)[1:12]
+
+load("/home/michels/repository/phylooptim/pkg/R/ace/monoaceerror.RData")
 ace <- l
 l <- NULL
 ace$mean_lik <- round(c(mean(ace[[1]][,5]),mean(ace[[2]][,5]),mean(ace[[3]][,5]),mean(ace[[4]][,5]),mean(ace[[5]][,5]),mean(ace[[6]][,5]),mean(ace[[7]][,5]),mean(ace[[8]][,5]),mean(ace[[9]][,5]),mean(ace[[10]][,5]),mean(ace[[11]][,5]),mean(ace[[12]][,5])),5)
 names(ace$mean_lik) <- names(ace)[1:12]
 
-load("/home/michels/repository/phylooptim/pkg/R/geiger/monogeigererror.RData")
-geiger <- l
-l <- NULL
-geiger$mean_lik <- round(c(mean(as.numeric(geiger[[11]][,1])),mean(as.numeric(geiger[[9]][,1])),mean(as.numeric(geiger[[10]][,1])),mean(as.numeric(geiger[[2]][,1])),mean(as.numeric(geiger[[4]][,1])),mean(as.numeric(geiger[[8]][,1])),mean(as.numeric(geiger[[12]][,1])),mean(as.numeric(geiger[[5]][,1])),mean(as.numeric(geiger[[7]][,1])),mean(as.numeric(geiger[[3]][,1])),mean(as.numeric(geiger[[1]][,1])),mean(as.numeric(geiger[[6]][,1]))),5)
-names(geiger$mean_lik) <- names(ace)[1:12]
-
-load("/home/michels/Hallowed/Dropbox/repository/phylooptim/pkg/R/ouch/monooucherror.RData")
+load("/home/michels/repository/phylooptim/pkg/R/ouch/monooucherror.RData")
 ouch <- l
 l <- NULL
 ouch$mean_lik <- round(c(mean(ouch[[1]][,5]),mean(ouch[[2]][,5]),mean(ouch[[3]][,5]),mean(ouch[[4]][,5]),mean(ouch[[5]][,5]),mean(ouch[[6]][,5]),mean(ouch[[7]][,5]),mean(ouch[[8]][,5]),mean(ouch[[9]][,5]),mean(ouch[[10]][,5]),mean(ouch[[11]][,5]),mean(ouch[[12]][,5])),5)
@@ -22,7 +22,7 @@ names(ouch$mean_lik) <- names(ouch)[1:12]
 #True Liklihood
 tglik <- max(na.omit(as.numeric(geiger$mean_lik)))
 gliktf <- rep(NA,length(geiger$mean_lik))
-for (i in c(1:length(gliktf))){if (is.na(ace$mean_lik[i])){gliktf[i] <- "NA"}else{if (as.numeric(geiger$mean_lik[i])==tglik){gliktf[i] <- "Y"}else{if (tglik-.05 < as.numeric(geiger$mean_lik[i]) && tglik+.05 > as.numeric(geiger$mean_lik[i])){gliktf[i] <- "O"}else{gliktf[i] <- "--"}}}}
+for (i in c(1:length(gliktf))){if (is.na(geiger$mean_lik[i])){gliktf[i] <- "NA"}else{if (as.numeric(geiger$mean_lik[i])==tglik){gliktf[i] <- "Y"}else{if (tglik-.05 < as.numeric(geiger$mean_lik[i]) && tglik+.05 > as.numeric(geiger$mean_lik[i])){gliktf[i] <- "O"}else{gliktf[i] <- "--"}}}}
 
 talik <- max(na.omit(as.numeric(ace$mean_lik)))
 aliktf <- rep(NA,length(ace$mean_lik))
@@ -30,7 +30,7 @@ for (i in c(1:length(aliktf))){if (is.na(ace$mean_lik[i])){aliktf[i] <- "NA"}els
 
 tolik <- max(na.omit(as.numeric(ouch$mean_lik)))
 oliktf <- rep(NA,length(ouch$mean_lik))
-for (i in c(1:length(oliktf))){if (is.na(ace$mean_lik[i])){oliktf[i] <- "NA"}else{if (as.numeric(ouch$mean_lik[i])==tolik){oliktf[i] <- "Y"}else{if (tolik-.05 < as.numeric(ouch$mean_lik[i]) && tolik+.05 > as.numeric(ouch$mean_lik[i])){oliktf[i] <- "O"}else{oliktf[i] <- "--"}}}}
+for (i in c(1:length(oliktf))){if (is.na(ouch$mean_lik[i])){oliktf[i] <- "NA"}else{if (as.numeric(ouch$mean_lik[i])==tolik){oliktf[i] <- "Y"}else{if (tolik-.05 < as.numeric(ouch$mean_lik[i]) && tolik+.05 > as.numeric(ouch$mean_lik[i])){oliktf[i] <- "O"}else{oliktf[i] <- "--"}}}}
 
 smoke <- matrix(c(gliktf,aliktf,oliktf),ncol=12,byrow=TRUE)
 colnames(smoke) <- names(ace)[1:12]
@@ -41,7 +41,7 @@ monocot
 #Plot geiger
 time.table <- vector("list", length(well))
 for (i in c(1:length(well))){
-  time.table[[i]] <- unlist(as.numeric(geiger[[i]]$time))*60}
+  time.table[[i]] <- unlist(as.numeric(geiger[[i]]$time))}
 names(time.table) <- well
 
 for (i in c(1:length(well))){
@@ -66,7 +66,7 @@ for (i in c(1:length(well))){
 }
 
 png(file="geiger_mono_propvstime.png")
-plotCI(time.tab[,1],time.tab[,2],ui=UI,li=LI,xlim=c(min(MIN),max(MAX)),err="x",xlab="Time (Seconds)",ylab="Proportion",main="fitContinuous Monocot",pch=NA,gap=3)
+plotCI(time.tab[,1],time.tab[,2],ui=UI,li=LI,xlim=c(min(MIN),max(MAX)),err="x",xlab="Time (Minutes)",ylab="Proportion",main="fitContinuous Monocot",pch=NA,gap=3)
 for (i in c(1:length(well)))
   {
   text(x=time.tab[,1][i],y=time.tab[,2][i],labels=well[i])
@@ -111,7 +111,7 @@ dev.off()
 #Plot ouch
 time.table <- vector("list", length(well))
 for (i in c(1:length(well))){
-  time.table[[i]] <- unlist(ouch[[i]]$time)*60}
+  time.table[[i]] <- unlist(ouch[[i]]$time)}
 names(time.table) <- well
 
 for (i in c(1:length(well))){
@@ -136,7 +136,7 @@ for (i in c(1:length(well))){
 }
 
 png(file="ouch_mono_propvstime.png")
-plotCI(time.tab[,1],time.tab[,2],ui=UI,li=LI,xlim=c(min(MIN),max(MAX)),err="x",xlab="Time (Seconds)",ylab="Proportion",main="Ouch Monocot",pch=NA,gap=3)
+plotCI(time.tab[,1],time.tab[,2],ui=UI,li=LI,xlim=c(min(MIN),max(MAX)),err="x",xlab="Time (Minutes)",ylab="Proportion",main="Ouch Monocot",pch=NA,gap=3)
 for (i in c(1:length(well)))
   {
   text(x=time.tab[,1][i],y=time.tab[,2][i],labels=well[i])
