@@ -1,4 +1,4 @@
-The "correct" likelihood was chosen by taking the average of the likelihoods within each method, and then finding the mode.
+The "correct" likelihood was chosen by taking the average of the likelihoods within each method, and then finding the max.
 
 Key
 "--" Didn't converge to the liklihood
