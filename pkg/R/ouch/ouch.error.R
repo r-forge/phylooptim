@@ -462,9 +462,9 @@ require(optimx)
 #ouch.wrap(tree,trait,model=c("ou1"))
 
 ##For aquilegia data
-#tree<-read.tree("Aquilegia.new.tre")
-#trait<-read.delim("Aquilegia.traits")
-#ouch.wrap(tree,trait,model=c("ou1"))
+tree<-read.tree("Aquilegia.new.tre")
+trait<-read.delim("Aquilegia.traits")
+ouch.wrap(tree,trait,model=c("ou1"))
 
 #For Monocot Data
 tree<-read.tree("BJO.Monocot.tre")
@@ -515,3 +515,26 @@ hansen.run<-function(){
 #save.image("/home/michels/repository/phylooptim/pkg/R/ouch/aquioucherror.RData")
 save.image("/Users/michels/phylooptim/pkg/R/ouch/monooucherror.RData")
 #save.image("/home/michels/repository/phylooptim/pkg/R/ouch/monooucherror.RData")
+
+     data(geospiza)
+     sapply(geospiza,class)
+     tree <- with(geospiza,drop.tip(geospiza.tree,nc$Tree.not.data))
+     dat <- geospiza$geospiza.data
+     nc <- with(geospiza,name.check(geospiza.tree,geospiza.data))
+     ### make an ouchtree out of the phy-format tree
+     ot <- ape2ouch(tree)
+     otd <- as(ot,"data.frame")
+     dat$labels <- rownames(dat)
+     otd <- merge(otd,dat,by="labels",all=TRUE)
+     rownames(otd) <- otd$nodes
+     ot <- with(otd,ouchtree(nodes=nodes,ancestors=ancestors,times=times,labels=labels))
+     otd$regimes <- as.factor("global")
+     h1 <- hansen(
+                  tree=ot,
+                  data=otd[c("wingL")],
+                  regimes=otd["regimes"],
+                  sqrt.alpha=c(1),
+                  sigma=c(1),
+                  maxit=10000
+                  )
+     summary(h1)
