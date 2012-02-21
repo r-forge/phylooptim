@@ -25,6 +25,17 @@ ouch   Y   --     --     Y      Y        Y      --     O           --  -- --   Y
 
 mammal
        spg Rcgmin Rvmmin bobyqa L-BFGS-B nlminb ucminf Nelder-Mead nlm CG BFGS newuoa
-geiger Y   --     --     Y      Y        Y      Y      Y           --  Y  Y    Y 
-ace    --  --     NA     --     --       --     --     Y           --  -- --   --   
-ouch   Y   --     --     Y      --       Y      Y      O           --  -- --   Y  
+geiger --  O      O      --     --       --     --     --          O   -- --   -- 
+
+ace    --  --     NA     --     --       --     --     --          --  -- --   --  
+ouch   O   --     --     O      --       O      O      O           --  -- --   O    
+
+mammal proportion correct
+       Liklihood       spg    Rcgmin    Rvmmin    bobyqa  L-BFGS-B    nlminb
+geiger -1808.556     0.000     1.000     1.000     0.000     0.000     0.000
+ace     -512.367     0.880     0.900     0.000     0.020     0.000     0.720
+ouch   -1821.086     1.000     0.909     0.818     1.000     0.273     1.000
+          ucminf Nelder-Mead       nlm        CG      BFGS    newuoa
+geiger     0.000       0.000     1.000     0.000     0.000     0.000
+ace        0.860       0.940     0.620     0.060     0.100     0.020
+ouch       1.000       0.182     0.500     0.455     0.273     1.000
