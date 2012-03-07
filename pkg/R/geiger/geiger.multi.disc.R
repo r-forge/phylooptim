@@ -4,7 +4,11 @@ require(ouch)
 require(optimx)
 require(geiger)
 require(multicore)
-load("geigerbackupdisc.RData")
+source("geiger.mine.disc.R")
+source("f.geiger.disc.R")
+
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 
 #The following will detect the number of cores you have.
 if(.Platform$OS.type == "windows") {
@@ -31,13 +35,69 @@ detectCores <- function(all.tests = FALSE)
 }
 }
 
-#M <- detectCores()                      #Use if you want all cores used (Total # of cores)
-M <- 22                                   #Use if you want to choose the # of cores to use
-it <- 22  	                         #Number of iterations (at least 2)
+#DATA TO BE USED (Default is geospiza)
+##Geospiza data
+data(geospiza)
+name <- c("geo")
+tree <- geospiza$geospiza.tree
+a.trait <- data.frame(geospiza$geospiza.data,T=as.factor(geospiza$geospiza.data[,1]>4.2))
+treeTransform <- "delta"
+model <- "ER"
+
+##Which column of data do you want?
+kk <- 6
+
+##Aquilegia Data
+#name <- c("aqui")
+#tree <- read.tree("Aquilegia.new.tre")
+#a.trait <- read.delim("Aquilegia.traits",row.names=1)
+#treeTransform <- "delta"
+#model <- "ER"
+
+##Which column of data do you want?
+#kk <- 1
+
+##Monocot Data
+#name <- c("mono")
+#tree <- read.tree("BJO.Monocot.tre")
+#a.trait <- read.delim("BJO.monocot_GS",row.names=1)
+#treeTransform <- "delta"
+#model <- "ER"
+
+##Which column of data do you want?
+#kk <- 3
+
+##Mammal Data
+#name <- c("mam")
+#tree<-read.nexus("mammalChar4.nex")
+#a.trait <- read.csv("mammalChar4.csv", row.names=1)
+#treeTransform <- "delta"
+#model <- "ER"
+
+##Which column of data do you want?
+#kk <- 1
+
+if (dim(a.trait)[2] == 1){a.trait <- data.frame(a.trait,well=rep(1,length(a.trait)))}
+nc <- name.check(tree,a.trait)
+if (nc[1]=="OK"){nc$Tree.not.data <- NULL}
+tree <- drop.tip(tree,nc$Tree.not.data)
+tree$edge.length[tree$edge.length<1e-5]=1e-5
+
+a.trait <- a.trait[order(rownames(a.trait)),]
+d <- data.frame(name=tree$tip.label,num=seq(1,length(tree$tip.label),by=1))
+dd <- d[order(d[,1]) , ]
+a.trait$new <- dd[,2]
+a.trait <- a.trait[order(a.trait$new),]
+
+dv <- treedata(tree,as.vector(a.trait[,kk]),sort=T)
+
+source("bounds.R")
+
+M <- detectCores()                      #Use if you want all cores used (Total # of cores)
+#M <- 22                                   #Use if you want to choose the # of cores to use
+it <- 10  	                         #Number of iterations (at least 2)
 z <- length(well)                        #Number of optimizers
-MIN=-10                                 #min upper value
-MAX=10                                   #max upper value
-strt <- seq(MIN,MAX,length=it)           #Start values
+strt <- seq(lower[2]+0.0001,upper[2]-0.0001,length=it)           #Start values
 N <- min(M,it)
 
 a <- ceiling(it / N)
@@ -59,58 +119,11 @@ for (d in c(1:a)){
 oli <- rep(NA,N)
 sum.oli <- rep(NA,N)
 for (b in c(1:N)){v[[b]] <- na.omit(v[[b]])}
-for (b in c(1:N)){oli[b] <- length(v[[b]])}
+for (b in c(1:N)){oli[b] <- length(v[[b]][,1])}
 for (b in c(1:N)){sum.oli[b] <- sum(oli[b:1])}
-#DATA TO BE USED (Default is geospiza)
-##Geospiza data
-data(geospiza)
-name <- c("geo")
-tree <- geospiza$geospiza.tree
-a.trait <- data.frame(geospiza$geospiza.data,T=as.factor(geospiza$geospiza.data[,1]>4.2))
-
-##Which column of data do you want?
-kk <- 6
-
-##Aquilegia Data
-#name <- c("aqui")
-#tree <- read.tree("Aquilegia.new.tre")
-#a.trait <- read.delim("Aquilegia.traits",row.names=1)
-
-##Which column of data do you want?
-#kk <- 1
-
-##Monocot Data
-#name <- c("mono")
-#tree <- read.tree("BJO.Monocot.tre")
-#a.trait <- read.delim("BJO.monocot_GS",row.names=1)
-
-##Which column of data do you want?
-#kk <- 3
-
-##Mammal Data
-#name <- c("mam")
-#tree<-read.nexus("mammalChar4.nex")
-#a.trait <- read.csv("mammalChar4.csv", row.names=1)
-
-##Which column of data do you want?
-#kk <- 1
-
-if (dim(a.trait)[2] == 1){a.trait <- data.frame(a.trait,well=rep(1,length(a.trait)))}
-nc <- name.check(tree,a.trait)
-if (nc[1]=="OK"){nc$Tree.not.data <- NULL}
-tree <- drop.tip(tree,nc$Tree.not.data)
-tree$edge.length[tree$edge.length<1e-5]=1e-5
-
-a.trait <- a.trait[order(rownames(a.trait)),]
-d <- data.frame(name=tree$tip.label,num=seq(1,length(tree$tip.label),by=1))
-dd <- d[order(d[,1]) , ]
-a.trait$new <- dd[,2]
-a.trait <- a.trait[order(a.trait$new),]
-
-dv <- treedata(tree,as.vector(a.trait[,kk]),sort=T)
 
 b.time <-proc.time()
-jobs <- lapply(v, function(x) parallel(f(x),silent=TRUE))
+jobs <- lapply(v, function(x) parallel(f.geig.disc(x),silent=TRUE))
 results <- collect(jobs,wait=TRUE)
 total.time <- as.numeric(proc.time()[3]-b.time[3])/(60)
 
@@ -127,7 +140,7 @@ for (j in c(1:N)){
   }
 }
 
-for (i in c(1:z)){l[[i]] <- l[[i]][order(l[[i]][,1]) , ]}
+for (i in c(1:z)){l[[i]] <- l[[i]][order(l[[i]][,6]) , ]}
 
 #Saves the results in the directory
 save.image(paste(getwd(),"/",name,"geigerdisc.RData",sep=""))
