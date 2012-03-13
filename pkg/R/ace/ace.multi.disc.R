@@ -4,7 +4,11 @@ require(ouch)
 require(optimx)
 require(geiger)
 require(multicore)
-load("acebackupdisc.RData")
+source("ace.mine.disc.R")
+source("f.ace.disc.R")
+
+wellt <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B",1,1,1,1,1,1,1)
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 
 #The following will detect the number of cores you have.
 if(.Platform$OS.type == "windows") {
