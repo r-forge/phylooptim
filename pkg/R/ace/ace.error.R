@@ -338,10 +338,10 @@ print.ace <- function(x, digits = 4, ...)
 library(optimx)
 
 ##For geospiza data
-#library(geiger)
-#data(geospiza)
-#attach(geospiza)
-#dv <-treedata(geospiza.tree,as.factor(geospiza.data[,1]>4.2),sort=T)
+library(geiger)
+data(geospiza)
+attach(geospiza)
+dv <-treedata(geospiza.tree,as.factor(geospiza.data[,1]>4.2),sort=T)
 
 ##For aquilegia data
 #require(ape)
@@ -361,7 +361,7 @@ tree$edge.length[tree$edge.length<1e-5]=1e-5
 dv <- treedata(tree,read.csv("mammalChar4.csv", row.names=1),sort=T)
 
 begin.time <- proc.time()
-l1 <- ace(as.numeric(dv$data),dv$phy,type='discrete',ip=1,CI=FALSE)
+l1 <- ace(dv$data,dv$phy,type='discrete',ip=1,CI=FALSE)
 
 #Time in minutes
 total.time <- as.numeric(proc.time()[3]-begin.time[3])/(60)
