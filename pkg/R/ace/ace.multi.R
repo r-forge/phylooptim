@@ -30,9 +30,9 @@ detectCores <- function(all.tests = FALSE)
 }
 }
 
-#M <- detectCores()                      #Use if you want all cores used (Total # of cores)
-M <- 2                                   #Use if you want to choose the # of cores to use
-it <- 4  	                         #Number of iterations (at least 2)
+M <- detectCores()                      #Use if you want all cores used (Total # of cores)
+#M <- 2                                   #Use if you want to choose the # of cores to use
+it <- 50  	                         #Number of iterations (at least 2)
 z <- length(well)                        #Number of optimizers
 MIN=0.01                                 #min upper value
 MAX=10                                   #max upper value
@@ -62,43 +62,47 @@ for (b in c(1:N)){v[[b]] <- na.omit(v[[b]])}
 data(geospiza)
 name <- c("geo")
 tree <- geospiza$geospiza.tree
-a <- data.frame(geospiza$geospiza.data,T=as.factor(geospiza$geospiza.data[,1]>4.2))
+a.trait <- data.frame(geospiza$geospiza.data,T=as.factor(geospiza$geospiza.data[,1]>4.2))
 
 ##Which column of data do you want?
-jj <- 6
+kk <- 6
 
 ##Aquilegia Data
 #name <- c("aqui")
 #tree <- read.tree("Aquilegia.new.tre")
-#a <- read.delim("Aquilegia.traits",row.names=1)
+#a.trait <- read.delim("Aquilegia.traits",row.names=1)
 
 ##Which column of data do you want?
-#jj <- 1
+#kk <- 1
 
 ##Monocot Data
 #name <- c("mono")
 #tree <- read.tree("BJO.Monocot.tre")
-#a <- read.delim("BJO.monocot_GS",row.names=1)
+#a.trait <- read.delim("BJO.monocot_GS",row.names=1)
 
 ##Which column of data do you want?
-#jj <- 3
+#kk <- 3
 
 ##Mammal Data
 #name <- c("mam")
 #tree<-read.nexus("mammalChar4.nex")
-#a <- read.csv("mammalChar4.csv", row.names=1)
+#a.trait <- read.csv("mammalChar4.csv", row.names=1)
 
 ##Which column of data do you want?
-#jj <- 1
+#kk <- 1
 
-trait <- data.frame(T=a[,jj])
-rownames(trait) <- rownames(a)
-name <- c("geo")
-tree$edge.length[tree$edge.length<1e-5]=1e-5
-nc <- name.check(tree,a)
+if (dim(a.trait)[2] == 1){a.trait <- data.frame(a.trait,well=rep(1,length(a.trait)))}
+nc <- name.check(tree,a.trait)
 if (nc[1]=="OK"){nc$Tree.not.data <- NULL}
 tree <- drop.tip(tree,nc$Tree.not.data)
-dv <- treedata(tree,trait,sort=T)
+
+a.trait <- a.trait[order(rownames(a.trait)),]
+d <- data.frame(name=tree$tip.label,num=seq(1,length(tree$tip.label),by=1))
+dd <- d[order(d[,1]) , ]
+a.trait$new <- dd[,2]
+a.trait <- a.trait[order(a.trait$new),]
+
+dv <- treedata(tree,a.trait[,kk],sort=T)
 
 b.time <-proc.time()
 jobs <- lapply(v, function(x) parallel(f(x),silent=TRUE))
@@ -107,9 +111,18 @@ total.time <- as.numeric(proc.time()[3]-b.time[3])/(60)
 
 l <- vector("list",length(well))
 names(l) <- well
-for (i in c(1:length(well))){l[[i]] <- matrix(NA,ncol=7,nrow=N);colnames(l[[i]]) <- c("I","lb","ub","P","L","conv","time")}
+for (i in c(1:length(well))){l[[i]] <- matrix(NA,ncol=7,nrow=n1*2);colnames(l[[i]]) <- c("I","lb","ub","P","L","conv","time")}
 
-for (i in c(1:N)){for (j in c(1:length(well))){l[[j]][i,] <- as.numeric(results[[i]][[j]][1,])}}
+for (j in c(1:N)){
+  for (i in c(1:z)){
+    for (d in c(1:a)){
+      if (j == 1 ){l[[i]][d,] <- as.numeric(results[[j]][[i]][d,])}else{
+                   l[[i]][d+(j-1)*a,] <- as.numeric(results[[j]][[i]][d,])}
+    }
+  }
+}
+
+for (i in c(1:z)){l[[i]] <- l[[i]][order(l[[i]][,1]) , ]}
 
 #Saves the results in the directory
 save.image(paste(getwd(),"/",name,"aceerror.RData",sep=""))
