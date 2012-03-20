@@ -242,7 +242,8 @@ names(obj.list)<-well
 		
 
           k<-3
-		start=log(c(beta.start, 1.5))
+#		start=log(c(beta.start, 1.5))
+                start=log(c(1.5, 0.1))
 		lower=log(bounds[1,c("beta","delta")])
 		upper=log(bounds[2,c("beta","delta")])
 
@@ -275,21 +276,25 @@ names(obj.list)<-well
                 print(start)
 if (well[i]==wellt[i]){
                 begin.time <-proc.time()
-		o <- tryCatch(optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper), 			            method=well[i]), error=function(x){
-                                                               x$fvalues$fvalues <- NA
-                                                               x$par$par[1] <- NA
-                                                               x$par$par[2] <- NA
-                                                               return(x)})
-		time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
+  o <- tryCatch(optimx(foo, p=start, lower=unlist(lower), upper=unlist(upper),
+         method=well[i]), error=function(x){
+                                                                     x$fvalues$fvalues <- NA
+                                                                     x$par$par[1] <- NA
+                                                                     x$par$par[2] <- NA
+                                                                     return(x)})
+  lbb <- lower$beta;ubb <- upper$beta;lbd <- lower$delta;ubd <-upper$delta 
+                time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
                 begin.time <-proc.time()
-		o <- tryCatch(optimx(foo, p=start,method=well[i]), error=function(x){
-                                                               x$fvalues$fvalues <- NA
-                                                               x$par$par[1] <- NA
-                                                               x$par$par[2] <- NA
-                                                               return(x)})
-		time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
+  o <- tryCatch(optimx(foo, p=start,method=well[i]), 
+                                     error=function(x){
+                                                       x$fvalues$fvalues <- NA
+                                                       x$par$par[1] <- NA
+                                                       x$par$par[2] <- NA
+                                                       return(x)})
+  lbb <- NA;ubb <- NA;lbd <- NA;ubd <- NA
+                time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}
           
-		results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]),beta.bnd=c(lower$beta,upper$beta),delta.bnds=c(lower$delta,upper$delta),time=time)
+results<-list(lnl=-o$fvalues$fvalues, beta=exp(o$par$par[1]), delta=exp(o$par$par[2]),beta.bnd=c(lbb,ubb),delta.bnds=c(lbd,ubd),conv=o$conv$conv,time=time)
 
 		#o<-optim(foo, p=start, lower=lower, upper=upper, method="L")
 		
@@ -563,8 +568,9 @@ ouMatrix <- function(vcvMatrix, alpha)
   return(vcvRescaled) 
 }
     	
-
+require(geiger)
 require(optimx)
+require(ape)
 
 ##Geospiza Data
 #data(geospiza)
@@ -587,16 +593,34 @@ require(optimx)
 #tree<- td$phy# Tree
 #n<- length(chdata)
 
-#Monocot Data
-require(ape)
-td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
-ntax=length(td$phy$tip.label)
-chdata<- read.delim("BJO.monocot_GS")[,3] # TIP data
-tree<- td$phy# Tree
-n<- length(chdata)
+##Monocot Data
+#td <- treedata(read.tree("BJO.Monocot.tre"),read.delim("BJO.monocot_GS")[,3],sort=T)
+#ntax=length(td$phy$tip.label)
+#chdata<- read.delim("BJO.monocot_GS")[,3] # TIP data
+#tree<- td$phy# Tree
+#n<- length(chdata)
 
-x1range<-seq(-15,10,length.out=100) #beta
-x2range<-seq(-5,8,length.out=100) #delta
+#x1range<-seq(-15,10,length.out=100) #beta
+#x2range<-seq(-5,8,length.out=100) #delta
+
+#Mammal Data
+start=log(c(1.5, 0.1))
+tree<-read.nexus("mammalChar1.nex")
+a <- read.csv("mammallogChar1.csv", row.names=1)
+jj <- 1
+
+trait <- data.frame(T=a[,jj])
+rownames(trait) <- rownames(a)
+tree$edge.length[tree$edge.length<1e-5]=1e-5
+nc <- name.check(tree,a)
+if (nc[1]=="OK"){nc$Tree.not.data <- NULL}
+tree <- drop.tip(tree,nc$Tree.not.data)
+td <- treedata(tree,trait,sort=T)
+
+#chdata<- a[,jj] # TIP data
+#ntax=length(td$phy$tip.label)
+#tree<- td$phy# Tree
+#n <- length(chdata)
 
 begin.time <-proc.time()
 l<-fitContinuous(td$phy,td$data,model="delta",bounds=list(delta=c(.0003,40)))
