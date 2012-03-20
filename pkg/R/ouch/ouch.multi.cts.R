@@ -72,13 +72,11 @@ a.trait <- geospiza$geospiza.data
 kk <- 1
 
 ##Aquilegia data
-#source("ouch.wrap.x.R")
 #name <- c("aqui")
 #tree <- read.tree("Aquilegia.new.tre")
 #a.trait <- read.delim("Aquilegia.traits",row.names=1)
 
 ##Monocot Data
-#source("ouch.wrap.x.R")
 #name <- c("mono")
 #tree <- read.tree("BJO.Monocot.tre")
 #a.trait <- read.delim("BJO.monocot_GS",row.names=1)
