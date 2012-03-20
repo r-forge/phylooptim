@@ -464,6 +464,11 @@ require(optimx)
 ##For aquilegia data
 tree<-read.tree("Aquilegia.new.tre")
 trait<-read.delim("Aquilegia.traits")
+
+#Change to discrete data
+misc<-rep(1,length(trait[,1]))
+trait <- cbind(trait,misc)
+trait <- data.frame(taxa=trait[,1],misc=trait[,4],syndrome=trait[,3])
 ouch.wrap(tree,trait,model=c("ou1"))
 
 #For Monocot Data
