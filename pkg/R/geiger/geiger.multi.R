@@ -98,7 +98,6 @@ jj <- 1
 
 trait <- data.frame(T=a[,jj])
 rownames(trait) <- rownames(a)
-name <- c("mono")
 tree$edge.length[tree$edge.length<1e-5]=1e-5
 nc <- name.check(tree,a)
 if (nc[1]=="OK"){nc$Tree.not.data <- NULL}
