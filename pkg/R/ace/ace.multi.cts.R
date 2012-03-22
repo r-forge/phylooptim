@@ -35,9 +35,9 @@ detectCores <- function(all.tests = FALSE)
 }
 }
 
-M <- detectCores()                      #Use if you want all cores used (Total # of cores)
-#M <- 2                                  #Use if you want to choose the # of cores to use
-it <- 10  	                         #Number of iterations (at least 2)
+#M <- detectCores()                      #Use if you want all cores used (Total # of cores)
+M <- 22                                  #Use if you want to choose the # of cores to use
+it <- 22  	                         #Number of iterations (at least 2)
 z <- length(well)                        #Number of optimizers
 MIN=0.01                                 #min upper value
 MAX=10                                   #max upper value
@@ -68,13 +68,13 @@ for (b in c(1:N)){sum.oli[b] <- sum(oli[b:1])}
 
 #DATA TO BE USED (Default is geospiza)
 ##Geospiza data
-data(geospiza)
-name <- c("geo")
-tree <- geospiza$geospiza.tree
-a.trait <- geospiza$geospiza.data
+#data(geospiza)
+#name <- c("geo")
+#tree <- geospiza$geospiza.tree
+#a.trait <- geospiza$geospiza.data
 
 ##Which column of data do you want?
-kk <- 1
+#kk <- 1
 
 ##Aquilegia Data
 #name <- c("aqui")
@@ -90,15 +90,15 @@ kk <- 1
 #a.trait <- read.delim("BJO.monocot_GS",row.names=1)
 
 ##Which column of data do you want?
-#kk <- 3
+#kk <- 2
 
 ##Mammal Data
-#name <- c("mam")
-#tree<-read.nexus("mammalChar4.nex")
-#a.trait <- read.csv("mammalChar4.csv", row.names=1)
+name <- c("mam")
+tree<-read.nexus("mammalChar1.nex")
+a.trait <- read.csv("mammallogChar1.csv", row.names=1)
 
 ##Which column of data do you want?
-#kk <- 1
+kk <- 1
 
 if (dim(a.trait)[2] == 1){a.trait <- data.frame(a.trait,well=rep(1,length(a.trait)))}
 nc <- name.check(tree,a.trait)
