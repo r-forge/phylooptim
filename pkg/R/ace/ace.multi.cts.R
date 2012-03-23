@@ -35,9 +35,9 @@ detectCores <- function(all.tests = FALSE)
 }
 }
 
-M <- detectCores()                      #Use if you want all cores used (Total # of cores)
-#M <- 22                                  #Use if you want to choose the # of cores to use
-it <- 24  	                         #Number of iterations (at least 2)
+#M <- detectCores()                      #Use if you want all cores used (Total # of cores)
+M <- 22                                  #Use if you want to choose the # of cores to use
+it <- 22  	                         #Number of iterations (at least 2)
 z <- length(well)                        #Number of optimizers
 MIN=0.01                                 #min upper value
 MAX=10                                   #max upper value
@@ -77,20 +77,20 @@ for (b in c(1:N)){sum.oli[b] <- sum(oli[b:1])}
 #kk <- 1
 
 ##Aquilegia Data
-name <- c("aqui")
-tree <- read.tree("Aquilegia.new.tre")
-a.trait <- read.delim("Aquilegia.traits",row.names=1)
-
-##Which column of data do you want?
-kk <- 2
-
-##Monocot Data
-#name <- c("mono")
-#tree <- read.tree("BJO.Monocot.tre")
-#a.trait <- read.delim("BJO.monocot_GS",row.names=1)
+#name <- c("aqui")
+#tree <- read.tree("Aquilegia.new.tre")
+#a.trait <- read.delim("Aquilegia.traits",row.names=1)
 
 ##Which column of data do you want?
 #kk <- 2
+
+##Monocot Data
+name <- c("mono")
+tree <- read.tree("BJO.Monocot.tre")
+a.trait <- read.delim("BJO.monocot_GS",row.names=1)
+
+##Which column of data do you want?
+kk <- 2
 
 ##Mammal Data
 #name <- c("mam")
@@ -104,7 +104,7 @@ if (dim(a.trait)[2] == 1){a.trait <- data.frame(a.trait,well=rep(1,length(a.trai
 nc <- name.check(tree,a.trait)
 if (nc[1]=="OK"){nc$Tree.not.data <- NULL}
 tree <- drop.tip(tree,nc$Tree.not.data)
-tree$edge.length[tree$edge.length<1e-5]=1e-5
+tree$edge.length[tree$edge.length<.1]=.1
 
 a.trait <- a.trait[order(rownames(a.trait)),]
 d <- data.frame(name=tree$tip.label,num=seq(1,length(tree$tip.label),by=1))
