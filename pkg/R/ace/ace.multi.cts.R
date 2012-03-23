@@ -82,7 +82,7 @@ for (b in c(1:N)){sum.oli[b] <- sum(oli[b:1])}
 #a.trait <- read.delim("Aquilegia.traits",row.names=1)
 
 ##Which column of data do you want?
-#kk <- 1
+#kk <- 2
 
 ##Monocot Data
 #name <- c("mono")
@@ -104,7 +104,7 @@ if (dim(a.trait)[2] == 1){a.trait <- data.frame(a.trait,well=rep(1,length(a.trai
 nc <- name.check(tree,a.trait)
 if (nc[1]=="OK"){nc$Tree.not.data <- NULL}
 tree <- drop.tip(tree,nc$Tree.not.data)
-tree$edge.length[tree$edge.length<1e-5]=1e-5
+tree$edge.length[tree$edge.length<.1]=.1
 
 a.trait <- a.trait[order(rownames(a.trait)),]
 d <- data.frame(name=tree$tip.label,num=seq(1,length(tree$tip.label),by=1))
