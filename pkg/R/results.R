@@ -64,7 +64,7 @@ plot1 <- function(yy,k)
 {
 time.table <- vector("list", length(well))
 for (i in c(1:length(well))){
-  time.table[[i]] <- unlist(as.numeric(yy[[i]][,9]))*60}
+  time.table[[i]] <- unlist(as.numeric(yy[[i]][,6]))*60}
 names(time.table) <- well
 
 time.tab <- matrix(NA,ncol=2,nrow=length(well))
@@ -101,31 +101,31 @@ meanprptn <- function(x,j,y)
 }
 
 #Discrete Geospiza Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/geoouchcts.RData")
-ouch_geo <- l
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/geoacects.RData")
+ace_geo <- l
 l <- NULL
 
 #Discrete Aquilegia Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/aquiouchcts.RData")
-ouch_aqui <- l
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/aquiacects.RData")
+ace_aqui <- l
 l <- NULL
 
 #Discrete Monocot Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/monoouchcts.RData")
-ouch_mono <- l
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/monoacects.RData")
+ace_mono <- l
 l <- NULL
 
 #Discrete Mammal Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/mamouchcts.RData")
-ouch_mam <- l
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/mamacects.RData")
+ace_mam <- l
 l <- NULL
 
 #Result tables
 didu <- list()
-didu[[1]] <- ouch_geo
-didu[[2]] <- ouch_aqui
-didu[[3]] <- ouch_mono
-didu[[4]] <- ouch_mam
+didu[[1]] <- ace_geo
+didu[[2]] <- ace_aqui
+didu[[3]] <- ace_mono
+didu[[4]] <- ace_mam
 
 mean_lik <- vector("list",length(didu))
 for (i in c(1:length(didu))){mean_lik[[i]] <- c(didu[[i]]$'Overall MLE',rep(NA,length(well)))}
@@ -199,6 +199,6 @@ o.table$'MLE for each function' <- MLE_table
 o.table$'SD of each MLE' <- sd_table
 o.table
 
-rm(list=ls()[-1*c(which(ls()=="o.table"),which(ls()=="ouch_geo"),which(ls()=="ouch_aqui"),which(ls()=="ouch_mono"),which(ls()=="ouch_mam"))])
+rm(list=ls()[-1*c(which(ls()=="o.table"),which(ls()=="ace_geo"),which(ls()=="ace_aqui"),which(ls()=="ace_mono"),which(ls()=="ace_mam"))])
 
-save.image("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouchctsresults.RData")
+save.image("/home/michels/Hallowed/repository/phylooptim/pkg/R/acectsresults.RData")
