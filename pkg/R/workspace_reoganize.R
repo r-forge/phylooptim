@@ -1,6 +1,6 @@
 rm(list = ls())
 
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/mamouchcts.RData")
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/mamacects.RData")
 l[[1]]
 #What colummn is likelihood in?
 lc <- 5
@@ -62,8 +62,8 @@ for (i in c(1:length(well))){
 
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 
-l$name1 <- "Hansen Cts Mammal"
-l$name2 <- "ouch_mam_disc"
+l$name1 <- "Ace Continuous Mammal"
+l$name2 <- "ace_mam_cts"
 l$name3 <- "mam"
 l$mean_lik <- rep(NA,length(well))
 l$median_lik <- rep(NA,length(well))
@@ -89,4 +89,4 @@ l$'Overall MLE' <- oMLE(l,4)
 
 rm(list=ls()[-1*c(which(ls()=="a.trait"),which(ls()=="l"),which(ls()=="kk"),which(ls()=="dv"))])
 
-save.image("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/mamouchcts.RData")
+save.image("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/mamacects.RData")
