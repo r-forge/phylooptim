@@ -110,23 +110,31 @@ names(obj.list)<-well
                 tip <- phy$edge[, 2] <= nb.tip
                 dev.BM <- function(p) {
                     if (p[1] < 0) return(1e100) # in case sigma² is negative
+
+                    foostore$sigma2<<-c(foostore$sigma2,p[1])
+                    foostore$ace<<-c(foostore$ace,p[2])
+
                     x1 <- p[-1][phy$edge[, 1] - nb.tip]
                     x2 <- numeric(length(x1))
                     x2[tip] <- x[phy$edge[tip, 2]]
                     x2[!tip] <- p[-1][phy$edge[!tip, 2] - nb.tip]
-                    -2 * (-sum((x1 - x2)^2/phy$edge.length)/(2*p[1]) -
-                          nb.node * log(p[1]))
+
+                    foostore$loglik <<- c(foostore$loglik,-2*(-sum((x1 - x2)^2/phy$edge.length)/(2*p[1]) - nb.node * log(p[1])))
+
+                    -2 * (-sum((x1 - x2)^2/phy$edge.length)/(2*p[1]) - nb.node * log(p[1]))
                 }
 
 for (i in c(1:length(well))){
   if (well[i]==wellt[i]){
         begin.time <-proc.time()
+        foostore=list(sigma2=NULL,ace=NULL,loglik=NULL)
         out <- tryCatch(optimx(function(p) dev.BM(p), p=c(1,rep(mean(x), length.out = nb.node)),
                       lower = rep(0, nb.node+1), upper = rep(1e50, nb.node+1),
                       method=well[i],hessian=TRUE), error=function(x){x <- NA
                                                          return(x)})
         lb <- 0;ub <- 1e50;time <- as.numeric(proc.time()[3]-begin.time[3])/(60)}else{
         begin.time <-proc.time()
+        foostore=list(sigma2=NULL,ace=NULL,loglik=NULL)
         out <- tryCatch(optimx(function(p) dev.BM(p), p=c(1,rep(mean(x), length.out = nb.node)),
                       method=well[i],hessian=TRUE), error=function(x){x <- NA
                                                          return(x)})
@@ -148,11 +156,12 @@ if (is.na(out[1])){obj$conv <- NA
                 names(obj$ace) <- (nb.tip + 1):(nb.tip + nb.node)
 #               se <- sqrt(diag(solve(attr(out,"details")[[1]]$nhatend)))
                 obj$sigma2 <- c(out$par$par[1])
+                obj$foostore <- foostore
                 if (CI) {
                   tmp <- se[-1] * qt(0.025, nb.node)
                   obj$CI95 <- cbind(obj$ace + tmp, obj$ace - tmp)
                 }}
-#    obj$call <- match.call()
+    obj$call <- match.call()
     class(obj) <- "ace"
     obj.list[[i]]<-obj
 }
