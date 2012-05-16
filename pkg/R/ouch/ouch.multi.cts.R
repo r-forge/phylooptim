@@ -5,6 +5,8 @@ require(optimx)
 require(geiger)
 require(multicore)
 load("ouchbackupcts.RData")
+source("f.ouch.cts.R")
+source("ouch.wrap.x.R")
 
 #The following will detect the number of cores you have.
 if(.Platform$OS.type == "windows") {
