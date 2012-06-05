@@ -4,6 +4,14 @@ require(gplots)
 
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 
+diff <- function(x, j, y, prefix="")
+{
+    v <- as.numeric(x$MLE[j])-x$'Overall MLE'
+    txt <- format(c(v, 0.123456789), digits=y)
+    q <- paste(prefix, txt, sep="")[1:12]
+    return(q)
+}
+
 MLE <- function(x, y, prefix="")
 {
     r <- x$MLE
@@ -101,22 +109,22 @@ meanprptn <- function(x,j,y)
 }
 
 #Discrete Geospiza Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/geoacects.RData")
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/geoacedisc.RData")
 ace_geo <- l
 l <- NULL
 
 #Discrete Aquilegia Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/aquiacects.RData")
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/aquiacedisc.RData")
 ace_aqui <- l
 l <- NULL
 
 #Discrete Monocot Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/monoacects.RData")
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/monoacedisc.RData")
 ace_mono <- l
 l <- NULL
 
 #Discrete Mammal Data
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/mamacects.RData")
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ace/mamacedisc.RData")
 ace_mam <- l
 l <- NULL
 
@@ -143,6 +151,7 @@ MLEt <- vector("list",length(didu))
 for (i in c(1:length(didu))){MLEt[[i]] <- c(didu[[i]]$'Overall MLE',rep(NA,length(well)))}
 names(MLEt) <- c(didu[[1]]$name3,didu[[2]]$name3,didu[[3]]$name3,didu[[4]]$name3)
 
+
 for (a in c(1:length(didu))){
    for (i in c(1:length(well))){
    prop[[a]][i+1] <- meanprptn(didu[[a]],i,4)
@@ -157,17 +166,17 @@ for (a in c(1:length(didu))){
    sd_lik[[a]][i+1] <- sd2(didu[[a]],i)
    }
    for (i in c(1:length(well))){
-   MLEt[[a]][i+1] <- max1(didu[[a]][[i]],4)
+   MLEt[[a]][i+1] <- diff(didu[[a]],i,4)
    }
 }
 
 smoke <- matrix(c(mean_lik$geo,mean_lik$aqui,mean_lik$mono,mean_lik$mam),ncol=13,byrow=TRUE)
-colnames(smoke) <- c("Liklihood",well)
+colnames(smoke) <- c("-2*log Lklhood",well)
 rownames(smoke) <- c("Geospiza","Aquilegia","Monocot","Mammal")
 mean_likelihood <- as.table(smoke)
 
 smoke4 <- matrix(c(median_lik$geo,median_lik$aqui,median_lik$mono,median_lik$mam),ncol=13,byrow=TRUE)
-colnames(smoke4) <- c("Liklihood",well)
+colnames(smoke4) <- c("-2*log Lklhood",well)
 rownames(smoke4) <- c("Geospiza","Aquilegia","Monocot","Mammal")
 median_likelihood <- as.table(smoke4)
 
@@ -177,12 +186,12 @@ rownames(smoke3) <- c("Geospiza","Aquilegia","Monocot","Mammal")
 sd_table <- as.table(smoke3)
 
 smoke1 <- matrix(c(prop$geo,prop$aqui,prop$mono,prop$mam),ncol=13,byrow=TRUE)
-colnames(smoke1) <- c("Liklihood",well)
+colnames(smoke1) <- c("-2*log Lklhood",well)
 rownames(smoke1) <- c("Geospiza","Aquilegia","Monocot","Mammal")
 proportion <- as.table(smoke1)
 
 smoke2 <- matrix(c(MLEt$geo,MLEt$aqui,MLEt$mono,MLEt$mam),ncol=13,byrow=TRUE)
-colnames(smoke2) <- c("Liklihood",well)
+colnames(smoke2) <- c("-2*log Lklhood",well)
 rownames(smoke2) <- c("Geospiza","Aquilegia","Monocot","Mammal")
 MLE_table <- as.table(smoke2)
 
@@ -192,13 +201,13 @@ for (j in c(1:length(didu))){
 }
 names(o.table) <- c(didu[[1]]$name1,didu[[2]]$name1,didu[[3]]$name1,didu[[4]]$name1)
 
-o.table$'Median MLE difference from true MLE' <- median_likelihood
-o.table$'Mean MLE difference from true MLE' <- mean_likelihood
-o.table$'Proportion Correct MLE' <- proportion
-o.table$'MLE for each function' <- MLE_table
-o.table$'SD of each MLE' <- sd_table
+o.table$'Median -2*log Lklhood difference from true -2*log Lklhood' <- median_likelihood
+o.table$'Mean -2*log Lklhood difference from true -2*log Lklhood' <- mean_likelihood
+o.table$'Proportion Correct Lklhood' <- proportion
+o.table$'Difference from true -2*log Lklhood' <- MLE_table
+o.table$'SD of each -2*log Lklhood' <- sd_table
 o.table
 
 rm(list=ls()[-1*c(which(ls()=="o.table"),which(ls()=="ace_geo"),which(ls()=="ace_aqui"),which(ls()=="ace_mono"),which(ls()=="ace_mam"))])
 
-save.image("/home/michels/Hallowed/repository/phylooptim/pkg/R/acectsresults.RData")
+save.image("/home/michels/Hallowed/repository/phylooptim/pkg/R/acediscresults.RData")
