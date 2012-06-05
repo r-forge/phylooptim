@@ -1,0 +1,278 @@
+\documentclass[12pt]{article}
+\usepackage{graphicx,amsfonts,enumitem,amssymb}
+\usepackage[fleqn]{amsmath}
+\usepackage{array}
+\usepackage{multirow}
+\setlength{\topmargin}{-1.0 in}
+\setlength{\textheight}{9.9  in}
+\setlength{\oddsidemargin}{-.7in} 
+\setlength{\evensidemargin}{-.7in}
+\setlength{\textwidth}{8in}
+\def\fs{\footnotesize}
+\def\R{{\sf R}}
+
+\renewcommand{\labelenumi}{\bf{8.\arabic{enumi}}}
+\renewcommand{\labelenumii}{(\alph{enumii})}
+
+%%\newcommand\T{\rule{0pt}{2.6ex}}
+%%\newcommand\B{\rule[-1.2ex]{0pt}{0pt}}
+
+%% Here it is: the code that adjusts justification and spacing around caption.
+%\makeatletter
+%% http://www.texnik.de/floats/caption.phtml
+%% This does spacing around caption.
+%\setlength{\abovecaptionskip}{6pt}   % 0.5cm as an example
+%\setlength{\belowcaptionskip}{6pt}   % 0.5cm as an example
+%% This does justification (left) of caption.
+%\long\def\@makecaption#1#2{%
+%  \vskip\abovecaptionskip
+%  \sbox\@tempboxa{#1: #2}%
+%  \ifdim \wd\@tempboxa >\hsize
+%    #1: #2\par
+%  \else
+%    \global \@minipagefalse
+%    \hb@xt@\hsize{\box\@tempboxa\hfil}%
+%  \fi
+%  \vskip\belowcaptionskip}
+%\makeatother
+
+\begin{document}
+\begin{center}
+  {\large Kurt Michels -- Homework \#7 STAT 571B Spring 2012}\\
+\end{center}
+<<prelim, results=HIDE,echo=FALSE>>=
+require(grid)
+
+.First <- function(){
+  options(show.signif.stars =FALSE)
+}
+.First()
+
+prop <- list()
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/acediscresults.RData")
+prop[[1]] <- o.table[[7]]
+rm(list=ls()[-1*which(ls()=="prop")])
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/geigerctsresults.RData")
+prop[[2]] <- o.table[[7]]
+rm(list=ls()[-1*which(ls()=="prop")])
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/geigerdiscresults.RData")
+prop[[3]] <- o.table[[7]]
+rm(list=ls()[-1*which(ls()=="prop")])
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouchctsresults.RData")
+prop[[4]] <- o.table[[7]]
+rm(list=ls()[-1*which(ls()=="prop")])
+names(prop) <- c("acedisc","geigercts","geigerdisc","ouchcts")
+
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
+
+propnew <- matrix(NA,ncol=16,nrow=12)
+for (k in c(1:4)){
+  for (i in c(1:12)){
+    for (j in c(1:4)){
+if (k==1){propnew[i,j] <- prop[[k]][j,i+1]}
+if (k==2){propnew[i,4+j] <- prop[[k]][j,i+1]}
+if (k==3){propnew[i,8+j] <- prop[[k]][j,i+1]}
+if (k==4){propnew[i,12+j] <- prop[[k]][j,i+1]}
+    }
+  }
+}
+
+row.names(propnew) <- well
+propnew <- cbind(propnew,c(5,6,9,7,10,2,1,3,8,11,12,4))
+propnew <- propnew[order(propnew[,17]) , ][,c(1:16)]
+@
+
+
+\begin{center}
+\setkeys{Gin}{width=.5\textwidth}
+{\fs
+<<propvertplot, echo=FALSE, fig=TRUE, eps = FALSE, height=12, width=16>>=
+plot(x=c(-1,17),y=c(-1,12),type="n",axes=FALSE,xlab="",ylab="")
+for (x in c(1:4)) {
+  for (y in c(1:12))  {
+     rect(xleft=x,xright=x+1,ybottom=12-(y+1),ytop=12-y,col=gray(1-propnew[y,x]))  
+   }
+}
+
+for (x in c(5:8)) {
+  for (y in c(1:12))  {
+     rect(xleft=x+0.25,xright=x+1+0.25,ybottom=12-(y+1),ytop=12-y,col=gray(1-propnew[y,x]))  
+   }
+}
+
+for (x in c(9:12)) {
+  for (y in c(1:12))  {
+     rect(xleft=x+0.5,xright=x+1+0.5,ybottom=12-(y+1),ytop=12-y,col=gray(1-propnew[y,x]))    
+   }
+}
+
+for (x in c(13:16)) {
+  for (y in c(1:12))  {
+     rect(xleft=x+0.75,xright=x+1+0.75,ybottom=12-(y+1),ytop=12-y,col=gray(1-propnew[y,x]))    
+   }
+}
+
+text(1, 10.5, "ucminf",cex = 1.5,pos=2)
+text(1, 9.5, "nlminb",cex = 1.5,pos=2)
+text(1, 8.5, "Nelder-Mead",cex = 1.5,pos=2)
+text(1, 7.5, "newuoa",cex = 1.5,pos=2)
+text(1, 6.5, "spg",cex = 1.5,pos=2)
+text(1, 5.5, "Rcgmin",cex = 1.5,pos=2)
+text(1, 4.5, "bobyqa",cex = 1.5,pos=2)
+text(1, 3.5, "nlm",cex = 1.5,pos=2)
+text(1, 2.5, "Rvmmin",cex = 1.5,pos=2)
+text(1, 1.5, "L-BFGS-B",cex = 1.5,pos=2)
+text(1, 0.5, "CG",cex = 1.5,pos=2)
+text(1, -0.5, "BFGS",cex = 1.5,pos=2)
+
+text(1.5, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(2.5, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(3.5, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(4.5, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(5.5+.25, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(6.5+.25, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(7.5+.25, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(8.5+.25, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(9.5+.5, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(10.5+.5, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(11.5+.5, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(12.5+.5, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(13.5+.75, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(14.5+.75, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(15.5+.75, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(16.5+.75, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(3, 12.35, "Ace Discrete",cex = 1.75)
+text(7+.25, 12.35, "fitContinuous",cex = 1.75)
+text(11+.5, 12.35, "fitDiscrete",cex = 1.75)
+text(15+.75, 12.35, "Hansen",cex = 1.75)
+@
+}
+\end{center}
+
+\begin{center}
+\setkeys{Gin}{width=.5\textwidth}
+{\fs
+<<likevertplot, echo=FALSE, fig=TRUE, eps = FALSE, height=12, width=16>>=
+rm(list=ls())
+require(grid)
+
+prop <- list()
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/acediscresults.RData")
+prop[[1]] <- o.table[[8]]
+rm(list=ls()[-1*which(ls()=="prop")])
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/geigerctsresults.RData")
+prop[[2]] <- o.table[[8]]
+rm(list=ls()[-1*which(ls()=="prop")])
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/geigerdiscresults.RData")
+prop[[3]] <- o.table[[8]]
+rm(list=ls()[-1*which(ls()=="prop")])
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouchctsresults.RData")
+prop[[4]] <- o.table[[8]]
+rm(list=ls()[-1*which(ls()=="prop")])
+names(prop) <- c("acedisc","geigercts","geigerdisc","ouchcts")
+
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
+
+propnew <- matrix(NA,ncol=16,nrow=12)
+for (k in c(1:4)){
+  for (i in c(1:12)){
+    for (j in c(1:4)){
+if (k==1){propnew[i,j] <- abs(as.numeric(prop[[k]][j,i+1]))}
+if (k==2){propnew[i,4+j] <- abs(as.numeric(prop[[k]][j,i+1]))}
+if (k==3){propnew[i,8+j] <- abs(as.numeric(prop[[k]][j,i+1]))}
+if (k==4){propnew[i,12+j] <- abs(as.numeric(prop[[k]][j,i+1]))}
+    }
+  }
+}
+
+row.names(propnew) <- well
+propnew <- cbind(propnew,c(5,6,9,7,10,2,1,3,8,11,12,4))
+propnew <- propnew[order(propnew[,17]) , ][,c(1:16)]
+
+for(i in c(1:12)){
+  for (j in c(1:16)){
+    if (propnew[i,j]<2 & propnew[i,j]>0){propnew[i,j] <- 0.50}
+  }
+}
+for(i in c(1:12)){
+  for (j in c(1:16)){
+    if (propnew[i,j]>=2){propnew[i,j] <- 1}
+  }
+}
+
+plot(x=c(-1,17),y=c(-1,12),type="n",axes=FALSE,xlab="",ylab="")
+for (x in c(1:4)) {
+  for (y in c(1:12))  {
+     rect(xleft=x,xright=x+1,ybottom=12-(y+1),ytop=12-y,col=gray(propnew[y,x]))  
+   }
+}
+
+for (x in c(5:8)) {
+  for (y in c(1:12))  {
+     rect(xleft=x+0.25,xright=x+1+0.25,ybottom=12-(y+1),ytop=12-y,col=gray(propnew[y,x]))  
+   }
+}
+
+for (x in c(9:12)) {
+  for (y in c(1:12))  {
+     rect(xleft=x+0.5,xright=x+1+0.5,ybottom=12-(y+1),ytop=12-y,col=gray(propnew[y,x]))    
+   }
+}
+
+for (x in c(13:16)) {
+  for (y in c(1:12))  {
+     rect(xleft=x+0.75,xright=x+1+0.75,ybottom=12-(y+1),ytop=12-y,col=gray(propnew[y,x]))    
+   }
+}
+
+text(1, 10.5, "ucminf",cex = 1.5,pos=2)
+text(1, 9.5, "nlminb",cex = 1.5,pos=2)
+text(1, 8.5, "Nelder-Mead",cex = 1.5,pos=2)
+text(1, 7.5, "newuoa",cex = 1.5,pos=2)
+text(1, 6.5, "spg",cex = 1.5,pos=2)
+text(1, 5.5, "Rcgmin",cex = 1.5,pos=2)
+text(1, 4.5, "bobyqa",cex = 1.5,pos=2)
+text(1, 3.5, "nlm",cex = 1.5,pos=2)
+text(1, 2.5, "Rvmmin",cex = 1.5,pos=2)
+text(1, 1.5, "L-BFGS-B",cex = 1.5,pos=2)
+text(1, 0.5, "CG",cex = 1.5,pos=2)
+text(1, -0.5, "BFGS",cex = 1.5,pos=2)
+
+text(1.5, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(2.5, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(3.5, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(4.5, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(5.5+.25, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(6.5+.25, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(7.5+.25, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(8.5+.25, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(9.5+.5, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(10.5+.5, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(11.5+.5, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(12.5+.5, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(13.5+.75, 11.4, "Geo",cex = 1.5,srt=90,pos=3)
+text(14.5+.75, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
+text(15.5+.75, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
+text(16.5+.75, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
+
+text(3, 12.35, "Ace Discrete",cex = 1.75)
+text(7+.25, 12.35, "fitContinuous",cex = 1.75)
+text(11+.5, 12.35, "fitDiscrete",cex = 1.75)
+text(15+.75, 12.35, "Hansen",cex = 1.75)
+@
+}
+\end{center}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
