@@ -1,3 +1,85 @@
+load("geigerctsresults.RData")
+full <- list()
+full[[1]] <- geiger_geo
+full[[2]] <- geiger_aqui
+full[[3]] <- geiger_mono
+full[[4]] <- geiger_mam
+rm(list=ls()[-1*c(which(ls()=="full"))])
+
+load("geigerdiscresults.RData")
+full[[5]] <- geiger_geo
+full[[6]] <- geiger_aqui
+full[[7]] <- geiger_mono
+full[[8]] <- geiger_mam
+rm(list=ls()[-1*c(which(ls()=="full"))])
+
+load("acectsresults.RData")
+full <- list()
+full[[9]] <- ace_geo
+full[[10]] <- ace_aqui
+full[[11]] <- ace_mono
+full[[12]] <- ace_mam
+rm(list=ls()[-1*c(which(ls()=="full"))])
+
+load("acediscresults.RData")
+full[[13]] <- ace_geo
+full[[14]] <- ace_aqui
+full[[15]] <- ace_mono
+full[[16]] <- ace_mam
+rm(list=ls()[-1*c(which(ls()=="full"))])
+
+load("ouchctsresults.RData")
+full <- list()
+full[[17]] <- ouch_geo
+full[[18]] <- ouch_aqui
+full[[19]] <- ouch_mono
+full[[20]] <- ouch_mam
+rm(list=ls()[-1*c(which(ls()=="full"))])
+
+
+well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
+time <- vector("list", length(well))
+prop <- vector("list", length(well))
+names(time) <- well
+names(prop) <- well
+
+
+#By function
+for (j in c(1:length(geiger))){for (i in c(1:length(well))){time[[i]] <- c(time[[i]],as.numeric(geiger[[j]][[i]]$time));prop[[i]] <- c(prop[[i]],as.numeric(geiger[[j]][[i]]$prptn))}}
+
+time.tab <- matrix(NA,ncol=2,nrow=length(well))
+MIN <- rep(NA,length(well))
+MAX <- rep(NA,length(well))
+UI <- rep(NA,length(well))
+LI <- rep(NA,length(well))
+for (i in c(1:length(well))){
+  time.tab[i,] <- c(mean(time[[i]]),mean(prop[[i]]))
+  MIN[i] <- min(time[[i]])
+  MAX[i] <- max(time[[i]])
+  UI[i] <- mean(time[[i]])+qnorm(.975)*sd(time[[i]])
+  LI[i] <- mean(time[[i]])+qnorm(.025)*sd(time[[i]])
+}
+
+png(file="stuff.png")
+plotCI(time.tab[,1],time.tab[,2],ui=UI,li=LI,xlim=c(min(MIN),max(MAX)),err="x",xlab="Time (Seconds)",ylab="Proportion",main=paste(yy$name1),pch=NA,gap=3)
+for (i in c(1:length(well)))
+  {
+  text(x=time.tab[,1][i],y=time.tab[,2][i],labels=well[i])
+}
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
+
+
 recomputebkg=T
 if(recomputebkg || is.na(res)){
   rm(list=ls())
