@@ -14,6 +14,8 @@
 \renewcommand{\labelenumi}{\bf{8.\arabic{enumi}}}
 \renewcommand{\labelenumii}{(\alph{enumii})}
 
+%Use the following command to resize the .png's :mogrify -resize 610 *.png
+
 %%\newcommand\T{\rule{0pt}{2.6ex}}
 %%\newcommand\B{\rule[-1.2ex]{0pt}{0pt}}
 
@@ -145,10 +147,10 @@ text(14.5+.75, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
 text(15.5+.75, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
 text(16.5+.75, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
 
-text(3, 12.35, "Ace Discrete",cex = 1.75)
+text(3, 12.35, "Ace",cex = 1.75)
 text(7+.25, 12.35, "fitContinuous",cex = 1.75)
 text(11+.5, 12.35, "fitDiscrete",cex = 1.75)
-text(15+.75, 12.35, "Hansen",cex = 1.75)
+text(15+.75, 12.35, "hansen",cex = 1.75)
 @
 }
 \end{center}
@@ -262,10 +264,10 @@ text(14.5+.75, 11.4, "Aqui",cex = 1.5,srt=90,pos=3)
 text(15.5+.75, 11.4, "Mono",cex = 1.5,srt=90,pos=3)
 text(16.5+.75, 11.4, "Mam",cex = 1.5,srt=90,pos=3)
 
-text(3, 12.35, "Ace Discrete",cex = 1.75)
+text(3, 12.35, "Ace",cex = 1.75)
 text(7+.25, 12.35, "fitContinuous",cex = 1.75)
 text(11+.5, 12.35, "fitDiscrete",cex = 1.75)
-text(15+.75, 12.35, "Hansen",cex = 1.75)
+text(15+.75, 12.35, "hansen",cex = 1.75)
 @
 }
 \end{center}
