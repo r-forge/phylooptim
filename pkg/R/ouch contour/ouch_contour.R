@@ -5,7 +5,9 @@ require(geiger)
 
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
 
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/geoouchctspath2.RData")
+#load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/geoouchctspath2.RData")
+
+load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/aquiouchctspath.RData")
 
 sa <- list()
 sig <- list()
@@ -16,13 +18,20 @@ for (i in c(1:length(well))){
   }
 
 ##Geospiza data
-data(geospiza)
-name <- c("geo")
-tree <- geospiza$geospiza.tree
-a.trait <- geospiza$geospiza.data
+#data(geospiza)
+#name <- c("geo")
+#tree <- geospiza$geospiza.tree
+#a.trait <- geospiza$geospiza.data
 
 ##Which column of data do you want?
-kk <- 1
+#kk <- 1
+
+##Aquilegia Data
+tree <- read.tree("Aquilegia.new.tre")
+a.trait <- read.delim("Aquilegia.traits",row.names=1)
+
+##Which column of data do you want?
+kk <- 2
 
 if (dim(a.trait)[2] == 1){a.trait <- data.frame(a.trait,well=rep(1,length(a.trait)))}
 nc <- name.check(tree,a.trait)
@@ -347,11 +356,12 @@ min.sa <- rep(NA,length(well));max.sa <- rep(NA,length(well));min.sig <- rep(NA,
 for (i in c(1:length(well))){min.sa[i] <- min(sa[[i]]);max.sa[i] <- max(sa[[i]]);min.sig[i] <- min(sig[[i]]);max.sig[i] <- max(sig[[i]])}
 
 #sqrt.alpha
-#x1range <- seq(2.5,10.5,length=100)
-x1range <- seq(min(na.omit(min.sa)),max(na.omit(max.sa)),length=100)
+#x1range <- seq(min(na.omit(min.sa)),max(na.omit(max.sa)),length=100)
+x1range <- seq(0,2,length=100)
 #sigma
-#x2range <- seq(0.4,floor(max(na.omit(max.sig)))+1,length=100)
-x2range <- seq(min(na.omit(min.sig)),floor(max(na.omit(max.sig)))+1,length=100)
+#x2range <- seq(min(na.omit(min.sig)),floor(max(na.omit(max.sig)))+1,length=100)
+x2range <- seq(0,2,length=100)
+
 #The response
   res<-t(sapply(x1range,function(x,y=x2range) sapply(y,function(z) ou.lik.fn(
                                tree=tree,
@@ -366,78 +376,20 @@ sy <- seq(length(na.omit(sa[[1]]))-1)
 
 #Default use filled.contour to get side legend
 
+
 #Filled contour without legend.
-filled.contour2 <-
-  function (x = seq(0, 1, length.out = nrow(z)),
-            y = seq(0, 1, length.out = ncol(z)), z, xlim = range(x, finite = TRUE), 
-            ylim = range(y, finite = TRUE), zlim = range(z, finite = TRUE), 
-            levels = pretty(zlim, nlevels), nlevels = 20, color.palette = cm.colors, 
-            col = color.palette(length(levels) - 1), plot.title, plot.axes, 
-            key.title, key.axes, asp = NA, xaxs = "i", yaxs = "i", las = 1, 
-            axes = TRUE, frame.plot = axes,mar, ...) 
-{
-  # modification by Ian Taylor of the filled.contour function
-  # to remove the key and facilitate overplotting with contour()
-  if (missing(z)) {
-    if (!missing(x)) {
-      if (is.list(x)) {
-        z <- x$z
-        y <- x$y
-        x <- x$x
-      }
-      else {
-        z <- x
-        x <- seq.int(0, 1, length.out = nrow(z))
-      }
-    }
-    else stop("no 'z' matrix specified")
-  }
-  else if (is.list(x)) {
-    y <- x$y
-    x <- x$x
-  }
-  if (any(diff(x) <= 0) || any(diff(y) <= 0)) 
-    stop("increasing 'x' and 'y' values expected")
-  mar.orig <- (par.orig <- par(c("mar", "las", "mfrow")))$mar
-  on.exit(par(par.orig))
-  w <- (3 + mar.orig[2]) * par("csi") * 2.54
-  par(las = las)
-  mar <- mar.orig
-  plot.new()
-  par(mar=mar)
-  plot.window(xlim, ylim, "", xaxs = xaxs, yaxs = yaxs, asp = asp)
-  if (!is.matrix(z) || nrow(z) <= 1 || ncol(z) <= 1) 
-    stop("no proper 'z' matrix specified")
-  if (!is.double(z)) 
-    storage.mode(z) <- "double"
-  .Internal(filledcontour(as.double(x), as.double(y), z, as.double(levels), 
-                          col = col))
-  if (missing(plot.axes)) {
-    if (axes) {
-      title(main = "", xlab = "", ylab = "")
-      Axis(x, side = 1)
-      Axis(y, side = 2)
-    }
-  }
-  else plot.axes
-  if (frame.plot) 
-    box()
-  if (missing(plot.title)) 
-    title(...)
-  else plot.title
-  invisible()
-}
+source("Filled.contour2.R")
 
 #Needed for a filled contour plot, in grayscale
       numcol<-50
-      nlevels=250
+      nlevels=50
       levels=pretty(range(res,na.rm=TRUE),nlevels,finite=TRUE)
       k<-pretty(trunc(range(res,na.rm=T)),nlevels)
-      wr.pal<-colorRampPalette(c("grey","white"))
+      wr.pal<-colorRampPalette(c("white","grey"))
       wr<-wr.pal(round(numcol*sum(k>=0)/length(k)))
-      bw.pal<-colorRampPalette(c("black","grey"))
+      bw.pal<-colorRampPalette(c("white","black"))
       bw<-bw.pal(round(numcol*sum(k<=0)/length(k)))
-      cols<-c(bw,wr)
+      cols<-c(bw)
       rcols<-cols[round((1:(length(levels)))*length(cols)/length(levels))]
 
 x.ticks <- c(sa[[1]][1],sa[[12]][length(sa[[12]])],sa[[1]][length(sa[[1]])],sa[[10]][length(sa[[10]])],sa[[5]][length(sa[[5]])],sa[[11]][length(sa[[11]])],sa[[9]][length(sa[[9]])])
@@ -445,7 +397,10 @@ x.labels <- c(round(sa[[1]][1],2),round(sa[[12]][length(sa[[12]])],2),round(sa[[
 y.ticks <- c(c(sig[[1]][1],sig[[12]][length(sig[[12]])],sig[[1]][length(sig[[1]])],sig[[10]][length(sig[[10]])],sig[[5]][length(sig[[5]])]),sig[[11]][length(sig[[11]])],sig[[9]][length(sig[[9]])],-4)
 y.labels <- c("","","","","","","","")
 
-#png(file="ouchcontourtotalgrey.png")
+png(file="ouchcontourtotalgrey.png")
+filled.contour2(x1range,x2range,res,levels=levels,col=rcols,xlab="sqrt.alpha",ylab="sigma",main="Aquilegia log likelihood surface")
+filled.contour(x1range,x2range,res,levels=levels,col=rcols)
+contour(x1range,x2range,res,levels=levels,add=TRUE)
 filled.contour2(x1range,x2range,res,levels=levels,col=rcols,axes=FALSE,
       		plot.axes={
                   axis(side = 1, at = x.ticks,labels=x.labels)
