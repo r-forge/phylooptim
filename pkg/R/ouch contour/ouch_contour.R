@@ -7,15 +7,8 @@ well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Neld
 
 #load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/geoouchctspath2.RData")
 
-load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/aquiouchctspath.RData")
-
-sa <- list()
-sig <- list()
-
-for (i in c(1:length(well))){
-    sa[[i]] <- l[[i]][[2]][[2]]$sqrt.alpha
-    sig[[i]] <- l[[i]][[2]][[2]]$sigma
-  }
+#load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/aquiouchctspath.RData")
+load("aquiouchctspath.RData")
 
 ##Geospiza data
 #data(geospiza)
@@ -27,9 +20,10 @@ for (i in c(1:length(well))){
 #kk <- 1
 
 ##Aquilegia Data
+#tree <- read.tree("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/Aquilegia.new.tre")
 tree <- read.tree("Aquilegia.new.tre")
+#a.trait <- read.delim("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/Aquilegia.traits",row.names=1)
 a.trait <- read.delim("Aquilegia.traits",row.names=1)
-
 ##Which column of data do you want?
 kk <- 2
 
@@ -61,8 +55,8 @@ otd$regimes <- as.factor("global")
 tree=ot
 data=otd["phenoTrait"]
 regimes=otd["regimes"]
-sqrt.alpha=sa[[1]][1]
-sigma=sig[[1]][1]
+sqrt.alpha=1
+sigma=1
 
 #maxit=10000
 #fit = TRUE
@@ -351,16 +345,67 @@ setMethod(
 
 #For gray contour plot
 #Exclude nlm & BFGS since predicts negative values.
-min.sa <- rep(NA,length(well));max.sa <- rep(NA,length(well));min.sig <- rep(NA,length(well));max.sig <- rep(NA,length(well))
+#min.sa.list <- list()
+#max.sa.list <- list()
+#min.sig.list <- list()
+#max.sig.list <- list()
 
-for (i in c(1:length(well))){min.sa[i] <- min(sa[[i]]);max.sa[i] <- max(sa[[i]]);min.sig[i] <- min(sig[[i]]);max.sig[i] <- max(sig[[i]])}
+#for (j in c(1:length(well))){
+#  min.sa.list[[j]] <- rep(NA,length(c(1:length(l[[j]][[2]]))[seq(1,length(l[[j]][[2]]),by=1)]))
+#  max.sa.list[[j]] <- rep(NA,length(c(1:length(l[[j]][[2]]))[seq(1,length(l[[j]][[2]]),by=1)]))
+#  min.sig.list[[j]] <- rep(NA,length(c(1:length(l[[j]][[2]]))[seq(1,length(l[[j]][[2]]),by=1)]))
+#  max.sig.list[[j]] <- rep(NA,length(c(1:length(l[[j]][[2]]))[seq(1,length(l[[j]][[2]]),by=1)]))
+#}
+
+#for (j in c(1:length(well))){
+#   for (i in c(1:length(l[[j]][[2]]))[seq(1,length(l[[j]][[2]]),by=1)]){
+#     min.sa.list[[j]][i] <- min(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha))
+#     max.sa.list[[j]][i] <- max(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha))
+#     min.sig.list[[j]][i] <- min(na.omit(l[[j]][[2]][[i]][[1]]$sigma))
+#     max.sig.list[[j]][i] <- max(na.omit(l[[j]][[2]][[i]][[1]]$sigma))
+#   }
+# }
+
+#min.sa <- rep(NA,length(well))
+#max.sa <- rep(NA,length(well))
+#min.sig <- rep(NA,length(well))
+#max.sig <- rep(NA,length(well))
+
+#for (j in c(1:length(well))){
+#  min.sa[j] <- min(min.sa.list[[j]])
+#  max.sa[j] <- max(max.sa.list[[j]])
+#  min.sig[j] <- min(min.sig.list[[j]])
+#  max.sig[j] <- max(max.sig.list[[j]])
+#}
+
+
+for (i in c(1:length(well))){
+  for (j in c(1:length(l[[i]][[2]]))){
+    l[[i]][[2]][[j]][[1]]$sqrt.alpha <- abs(l[[i]][[2]][[j]][[1]]$sqrt.alpha)
+    l[[i]][[2]][[j]][[1]]$sigma <- abs(l[[i]][[2]][[j]][[1]]$sigma)
+  }
+}
+
+#c(2,5,16,17,18,20,22,23,24,25)
+#for (i in c(1:length(well))){
+#  i <- 7
+#  print(abs(l[[i]][[1]][,c(1,2,6,7)]))
+#}
+#for (i in c(1:length(well))){
+#  print(abs(l[[i]][[1]][c(2,18,22,25),c(1,2,6,7)]))
+#}
 
 #sqrt.alpha
-#x1range <- seq(min(na.omit(min.sa)),max(na.omit(max.sa)),length=100)
-x1range <- seq(0,2,length=100)
+#
+#x1range <- seq(min(min.sa),max(max.sa),length=100)
+x1range1 <- seq(0,2,length=100)
+x1range <- seq(2.05,8.5,length=100)
+x1range <- c(x1range1,x1range)
 #sigma
 #x2range <- seq(min(na.omit(min.sig)),floor(max(na.omit(max.sig)))+1,length=100)
-x2range <- seq(0,2,length=100)
+x2range1 <- seq(0,2,length=100)
+x2range <- seq(2.05,8.5,length=100)
+x2range <- c(x2range1,x2range)
 
 #The response
   res<-t(sapply(x1range,function(x,y=x2range) sapply(y,function(z) ou.lik.fn(
@@ -371,98 +416,120 @@ x2range <- seq(0,2,length=100)
                                dat=dat
                                )$deviance/-2)))
 
-s <- seq(length(sa[[1]])-1)# one shorter than data
-sy <- seq(length(na.omit(sa[[1]]))-1)
-
 #Default use filled.contour to get side legend
-
 
 #Filled contour without legend.
 source("Filled.contour2.R")
 
 #Needed for a filled contour plot, in grayscale
       numcol<-50
-      nlevels=50
-      levels=pretty(range(res,na.rm=TRUE),nlevels,finite=TRUE)
-      k<-pretty(trunc(range(res,na.rm=T)),nlevels)
+#     nlevels=50
+#     levels=pretty(range(res,na.rm=TRUE),nlevels,finite=TRUE)
+#     k<-pretty(trunc(range(res,na.rm=T)),nlevels)
       wr.pal<-colorRampPalette(c("white","grey"))
-      wr<-wr.pal(round(numcol*sum(k>=0)/length(k)))
-      bw.pal<-colorRampPalette(c("white","black"))
-      bw<-bw.pal(round(numcol*sum(k<=0)/length(k)))
-      cols<-c(bw)
-      rcols<-cols[round((1:(length(levels)))*length(cols)/length(levels))]
+      wr <- wr.pal(numcol)
+#     wr<-wr.pal(round(numcol*sum(k>=0)/length(k)))
+      bw.pal<-colorRampPalette(c("grey","black"))
+#     bw<-bw.pal(round(numcol*sum(k<=0)/length(k)))
+      bw <- bw.pal(numcol)
+      cols<-c(wr,bw)
+#     rcols<-cols[round((1:(length(levels)))*length(cols)/length(levels))]
 
-x.ticks <- c(sa[[1]][1],sa[[12]][length(sa[[12]])],sa[[1]][length(sa[[1]])],sa[[10]][length(sa[[10]])],sa[[5]][length(sa[[5]])],sa[[11]][length(sa[[11]])],sa[[9]][length(sa[[9]])])
-x.labels <- c(round(sa[[1]][1],2),round(sa[[12]][length(sa[[12]])],2),round(sa[[1]][length(sa[[1]])],2),round(sa[[10]][length(sa[[10]])],2),round(sa[[5]][length(sa[[5]])],2),round(sa[[11]][length(sa[[11]])],2),round(sa[[9]][length(sa[[9]])],2))
-y.ticks <- c(c(sig[[1]][1],sig[[12]][length(sig[[12]])],sig[[1]][length(sig[[1]])],sig[[10]][length(sig[[10]])],sig[[5]][length(sig[[5]])]),sig[[11]][length(sig[[11]])],sig[[9]][length(sig[[9]])],-4)
-y.labels <- c("","","","","","","","")
+#x.ticks <- c(sa[[1]][1],sa[[12]][length(sa[[12]])],sa[[1]][length(sa[[1]])],sa[[10]][length(sa[[10]])],sa[[5]][length(sa[[5]])],sa[[11]][length(sa[[11]])],sa[[9]][length(sa[[9]])])
+#x.labels <- c(round(sa[[1]][1],2),round(sa[[12]][length(sa[[12]])],2),round(sa[[1]][length(sa[[1]])],2),round(sa[[10]][length(sa[[10]])],2),round(sa[[5]][length(sa[[5]])],2),round(sa[[11]][length(sa[[11]])],2),round(sa[[9]][length(sa[[9]])],2))
+#y.ticks <- c(c(sig[[1]][1],sig[[12]][length(sig[[12]])],sig[[1]][length(sig[[1]])],sig[[10]][length(sig[[10]])],sig[[5]][length(sig[[5]])]),sig[[11]][length(sig[[11]])],sig[[9]][length(sig[[9]])],-4)
+#y.labels <- c("","","","","","","","")
+x.labels <- c(0:8)
+y.labels <- c(0:8)
 
-png(file="ouchcontourtotalgrey.png")
-filled.contour2(x1range,x2range,res,levels=levels,col=rcols,xlab="sqrt.alpha",ylab="sigma",main="Aquilegia log likelihood surface")
-filled.contour(x1range,x2range,res,levels=levels,col=rcols)
-contour(x1range,x2range,res,levels=levels,add=TRUE)
-filled.contour2(x1range,x2range,res,levels=levels,col=rcols,axes=FALSE,
+#lev <- c(seq(-30-33*10,-40,by=10),seq(-30,-22,length.out=17))
+lev <- c(seq(-30-83*.5,-30.5,by=.5),seq(-30,-22,length.out=17))
+#filled.contour2(x1range,x2range,res,levels=lev,col=cols,xlab="sqrt.alpha",ylab="sigma",main="Aquilegia log likelihood surface")
+#png(file="ouchcontourtotalgrey.png")
+#filled.contour2(x1range,x2range,res,levels=levels1,col=rcols1,xlab="sqrt.alpha",ylab="sigma",main="Aquilegia log likelihood surface")
+#filled.contour(x1range,x2range,res,levels=levels,col=rcols)
+for (j in c(1:length(well))){
+png(file=paste("ouchcontour",well[j],"black.png",sep=""))
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
       		plot.axes={
-                  axis(side = 1, at = x.ticks,labels=x.labels)
-                  axis(side = 2, at = y.ticks,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma")
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
                       }
                )
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
 
-mtext(at=2.2, line=c(-1.1,-9,-10,-11,-12,-13,-19.5,-25), text=c(round(sig[[1]][1],2),round(sig[[12]][length(sig[[12]])],2),round(sig[[1]][length(sig[[1]])],2),round(sig[[10]][length(sig[[10]])],2),round(sig[[5]][length(sig[[5]])],2),round(sig[[11]][length(sig[[11]])],2),round(sig[[9]][length(sig[[9]])],2),-4),cex = 1)
-lev <- c(seq(-25000,-15,by=5),-13,-11.5,-9.5,-7.5,-6,-4,-2,-0.5,3.5,5,7,9)
-contour(x1range,x2range,res,levels=lev,add=TRUE)
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
 
-  arrows(sa[[1]][s], sig[[1]][s], sa[[1]][s+1],sig[[1]][s+1],length=.1,col=1,type = "l",lwd=2,lty=1)
-  arrows(sa[[2]][s], sig[[2]][s], sa[[2]][s+1],sig[[2]][s+1],length=.1,col="green2",type = "l",lwd=2,lty=2)
-  arrows(na.omit(sa[[3]])[sy], na.omit(sig[[3]])[sy], na.omit(sa[[3]])[sy+1],na.omit(sig[[3]])[sy+1],length=.1,col="yellow",type = "l",lwd=2,lty=3)
-  arrows(sa[[4]][s], sig[[4]][s], sa[[4]][s+1],sig[[4]][s+1],length=.1,col="pink3",type = "l",lwd=2,lty=4)
-  arrows(sa[[5]][s], sig[[5]][s], sa[[5]][s+1],sig[[5]][s+1],length=.1,col="yellow3",type = "l",lwd=2,lty=5)
-  arrows(sa[[6]][s], sig[[6]][s], sa[[6]][s+1],sig[[6]][s+1],length=.1,col="red3",type = "l",lwd=2,lty=6)
-  arrows(sa[[7]][s], sig[[7]][s], sa[[7]][s+1],sig[[7]][s+1],length=.1,col="green4",type = "l",lwd=2,lty=7)
-  arrows(sa[[8]][s], sig[[8]][s], sa[[8]][s+1],sig[[8]][s+1],length=.1,col="blue4",type = "l",lwd=2,lty=8)
-  arrows(sa[[9]][s], sig[[9]][s], sa[[9]][s+1],sig[[9]][s+1],length=.1,col="red4",type = "l",lwd=2,lty=9)
-  arrows(sa[[10]][s], sig[[10]][s], sa[[10]][s+1],sig[[10]][s+1],length=.1,col=6,type = "l",lwd=2,lty=10)
-  arrows(sa[[11]][s], sig[[11]][s], sa[[11]][s+1],sig[[11]][s+1],length=.1,col="blue",type = "l",lwd=2,lty=11)
-  arrows(sa[[12]][s], sig[[12]][s], sa[[12]][s+1],sig[[12]][s+1],length=.1,col="yellow4",type = "l",lwd=2,lty=12)
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+dev.off()
+}
+
+#mtext(at=2.2, line=c(-1.1,-9,-10,-11,-12,-13,-19.5,-25), text=c(round(sig[[1]][1],2),round(sig[[12]][length(sig[[12]])],2),round(sig[[1]][length(sig[[1]])],2),round(sig[[10]][length(sig[[10]])],2),round(sig[[5]][length(sig[[5]])],2),round(sig[[11]][length(sig[[11]])],2),round(sig[[9]][length(sig[[9]])],2),-4),cex = 1)
+#lev <- c(seq(-25000,-15,by=5),-13,-11.5,-9.5,-7.5,-6,-4,-2,-0.5,3.5,5,7,9)
+#contour(x1range,x2range,res,levels=lev,add=TRUE)
+
+#  arrows(sa[[1]][s], sig[[1]][s], sa[[1]][s+1],sig[[1]][s+1],length=.1,col=1,type = "l",lwd=2,lty=1)
+#  arrows(sa[[2]][s], sig[[2]][s], sa[[2]][s+1],sig[[2]][s+1],length=.1,col="green2",type = "l",lwd=2,lty=2)
+#  arrows(na.omit(sa[[3]])[sy], na.omit(sig[[3]])[sy], na.omit(sa[[3]])[sy+1],na.omit(sig[[3]])[sy+1],length=.1,col="yellow",type = "l",lwd=2,lty=3)
+#  arrows(sa[[4]][s], sig[[4]][s], sa[[4]][s+1],sig[[4]][s+1],length=.1,col="pink3",type = "l",lwd=2,lty=4)
+#  arrows(sa[[5]][s], sig[[5]][s], sa[[5]][s+1],sig[[5]][s+1],length=.1,col="yellow3",type = "l",lwd=2,lty=5)
+#  arrows(sa[[6]][s], sig[[6]][s], sa[[6]][s+1],sig[[6]][s+1],length=.1,col="red3",type = "l",lwd=2,lty=6)
+#  arrows(sa[[7]][s], sig[[7]][s], sa[[7]][s+1],sig[[7]][s+1],length=.1,col="green4",type = "l",lwd=2,lty=7)
+#  arrows(sa[[8]][s], sig[[8]][s], sa[[8]][s+1],sig[[8]][s+1],length=.1,col="blue4",type = "l",lwd=2,lty=8)
+#  arrows(sa[[9]][s], sig[[9]][s], sa[[9]][s+1],sig[[9]][s+1],length=.1,col="red4",type = "l",lwd=2,lty=9)
+#  arrows(sa[[10]][s], sig[[10]][s], sa[[10]][s+1],sig[[10]][s+1],length=.1,col=6,type = "l",lwd=2,lty=10)
+#  arrows(sa[[11]][s], sig[[11]][s], sa[[11]][s+1],sig[[11]][s+1],length=.1,col="blue",type = "l",lwd=2,lty=11)
+#  arrows(sa[[12]][s], sig[[12]][s], sa[[12]][s+1],sig[[12]][s+1],length=.1,col="yellow4",type = "l",lwd=2,lty=12)
 
 #Start-points, same for every optimizer
-  points(sa[[1]][1],sig[[1]][1],col="green",pch=19,cex=2)
+#  points(sa[[1]][1],sig[[1]][1],col="green",pch=19,cex=2)
                         
 #End-points                     
-  points(sa[[1]][length(sa[[1]])],sig[[1]][length(sig[[1]])],col=1,pch=1,cex=3,lwd=2)
-  points(sa[[2]][length(sa[[2]])],sig[[2]][length(sig[[2]])],col="green2",pch=2,cex=3,lwd=2)
-  points(na.omit(sa[[3]])[length(na.omit(sa[[3]]))],na.omit(sig[[3]])[length(na.omit(sig[[3]]))],col="yellow",pch=3,cex=3,lwd=2)
-  points(sa[[4]][length(sa[[4]])],sig[[4]][length(sig[[4]])],col="pink3",pch=4,cex=3,lwd=2)
-  points(sa[[5]][length(sa[[5]])],sig[[5]][length(sig[[5]])],col="yellow3",pch=5,cex=3,lwd=2)
-  points(sa[[6]][length(sa[[6]])],sig[[6]][length(sig[[6]])],col="red3",pch=6,cex=3,lwd=2)
-  points(sa[[7]][length(sa[[7]])],sig[[7]][length(sig[[7]])],col="green4",pch=7,cex=3,lwd=2)
-  points(sa[[8]][length(sa[[8]])],sig[[8]][length(sig[[8]])],col="blue4",pch=8,cex=3,lwd=2)
-  points(sa[[9]][length(sa[[9]])],sig[[9]][length(sig[[9]])],col="red4",pch=9,cex=3,lwd=2)
-  points(sa[[10]][length(sa[[10]])],sig[[10]][length(sig[[10]])],col=6,pch=10,cex=3,lwd=2)
-  points(sa[[11]][length(sa[[11]])],sig[[11]][length(sig[[11]])],col="blue",pch=11,cex=3,lwd=2)
-  points(sa[[12]][length(sa[[12]])],sig[[12]][length(sig[[12]])],col="yellow4",pch=12,cex=3,lwd=2)
+#  points(sa[[1]][length(sa[[1]])],sig[[1]][length(sig[[1]])],col=1,pch=1,cex=3,lwd=2)
+#  points(sa[[2]][length(sa[[2]])],sig[[2]][length(sig[[2]])],col="green2",pch=2,cex=3,lwd=2)
+#  points(na.omit(sa[[3]])[length(na.omit(sa[[3]]))],na.omit(sig[[3]])[length(na.omit(sig[[3]]))],col="yellow",pch=3,cex=3,lwd=2)
+#  points(sa[[4]][length(sa[[4]])],sig[[4]][length(sig[[4]])],col="pink3",pch=4,cex=3,lwd=2)
+#  points(sa[[5]][length(sa[[5]])],sig[[5]][length(sig[[5]])],col="yellow3",pch=5,cex=3,lwd=2)
+#  points(sa[[6]][length(sa[[6]])],sig[[6]][length(sig[[6]])],col="red3",pch=6,cex=3,lwd=2)
+#  points(sa[[7]][length(sa[[7]])],sig[[7]][length(sig[[7]])],col="green4",pch=7,cex=3,lwd=2)
+#  points(sa[[8]][length(sa[[8]])],sig[[8]][length(sig[[8]])],col="blue4",pch=8,cex=3,lwd=2)
+#  points(sa[[9]][length(sa[[9]])],sig[[9]][length(sig[[9]])],col="red4",pch=9,cex=3,lwd=2)
+#  points(sa[[10]][length(sa[[10]])],sig[[10]][length(sig[[10]])],col=6,pch=10,cex=3,lwd=2)
+#  points(sa[[11]][length(sa[[11]])],sig[[11]][length(sig[[11]])],col="blue",pch=11,cex=3,lwd=2)
+#  points(sa[[12]][length(sa[[12]])],sig[[12]][length(sig[[12]])],col="yellow4",pch=12,cex=3,lwd=2)
 
 #True End-Point
-  points(sa[[12]][length(sa[[12]])],sig[[12]][length(sig[[12]])],col="red",pch=19,cex=2)
+#  points(sa[[12]][length(sa[[12]])],sig[[12]][length(sig[[12]])],col="red",pch=19,cex=2)
 
 #Legend
-legend(2.75,-1, c("start value","true end value"),
-     col = c("green","red"),
-     text.col =c(1) ,
-     bty="n",pch=c(19),
-     merge = TRUE)
+#legend(2.75,-1, c("start value","true end value"),
+#     col = c("green","red"),
+#     text.col =c(1) ,
+#     bty="n",pch=c(19),
+#     merge = TRUE)
 
-legend(2.68,-1.75, well[1:5],
-     col = c(1,"green2","yellow","pink3","yellow3"),
-     text.col =c(1,"green2","yellow","pink3","yellow3") ,
-     lty = c(1:5),bty="n",pch=c(1:5),
-     merge = TRUE)
+#legend(2.68,-1.75, well[1:5],
+#     col = c(1,"green2","yellow","pink3","yellow3"),
+#     text.col =c(1,"green2","yellow","pink3","yellow3") ,
+#     lty = c(1:5),bty="n",pch=c(1:5),
+#     merge = TRUE)
 
-legend(5.5,-1, well[6:12],
-     col = c("red3","green4","blue4","red4",6,"blue","yellow4"),
-     text.col =c("red3","green4","blue4","red4",6,"blue","yellow4") ,
-     lty = c(6:12),bty="n",pch=c(6:12),
-     merge = TRUE)
+#legend(5.5,-1, well[6:12],
+#     col = c("red3","green4","blue4","red4",6,"blue","yellow4"),
+#     text.col =c("red3","green4","blue4","red4",6,"blue","yellow4") ,
+#     lty = c(6:12),bty="n",pch=c(6:12),
+#     merge = TRUE)
 
 #dev.off()
