@@ -151,6 +151,11 @@ text(3, 12.35, "Ace",cex = 1.75)
 text(7+.25, 12.35, "fitContinuous",cex = 1.75)
 text(11+.5, 12.35, "fitDiscrete",cex = 1.75)
 text(15+.75, 12.35, "hansen",cex = 1.75)
+
+text((2.5+3.5)/2,9.5,"default optimizer",col="white",cex=2)
+text((6.5+.25+7.5+.25)/2,1.5,"default optimizer",col="white",cex=2)
+text((10.5+.5+11.5+.5)/2,1.5,"default optimizer",col="black",cex=2)
+text((14.5+.75+15.5+.75)/2,8.5,"default optimizer",col="white",cex=2)
 @
 }
 \end{center}
@@ -268,6 +273,11 @@ text(3, 12.35, "Ace",cex = 1.75)
 text(7+.25, 12.35, "fitContinuous",cex = 1.75)
 text(11+.5, 12.35, "fitDiscrete",cex = 1.75)
 text(15+.75, 12.35, "hansen",cex = 1.75)
+
+text((2.5+3.5)/2,9.5,"default optimizer",col="white",cex=2)
+text((6.5+.25+7.5+.25)/2,1.5,"default optimizer",col="white",cex=2)
+text((10.5+.5+11.5+.5)/2,1.5,"default optimizer",col="black",cex=2)
+text((14.5+.75+15.5+.75)/2,8.5,"default optimizer",col="white",cex=2)
 @
 }
 \end{center}
