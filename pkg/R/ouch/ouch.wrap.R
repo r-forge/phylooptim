@@ -8,7 +8,8 @@ ouch.wrap<-function(tree, trait, model=c("brown", "ou1", "ousm")){
 
 	ot <- ape2ouch(tree)
 	otd <- as(ot,"data.frame")
-	trait <- data.frame(regime=trait[,2], phenoTrait=trait[,3], labels=trait[,1])
+#	trait <- data.frame(regime=trait[,2], phenoTrait=trait[,3], labels=trait[,1])
+	trait <- data.frame(phenoTrait=trait[,2], labels=trait[,1])
 	otd <- merge(otd,trait, by="labels", all=TRUE)
 	rownames(otd) <- otd$nodes
 	ot <- with(otd,ouchtree(nodes=nodes,ancestors=ancestors,times=times,labels=labels))
