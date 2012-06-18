@@ -4,7 +4,8 @@ require(ouch)
 require(geiger)
 
 well <- c("spg", "Rcgmin", "Rvmmin", "bobyqa","L-BFGS-B","nlminb","ucminf","Nelder-Mead","nlm","CG","BFGS","newuoa")
-
+#actual order of well
+#well[c(7,6,8,12,1,2,4,9,3,5,10,11)]
 #load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/geoouchctspath2.RData")
 
 #load("/home/michels/Hallowed/repository/phylooptim/pkg/R/ouch/aquiouchctspath.RData")
