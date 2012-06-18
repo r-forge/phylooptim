@@ -366,7 +366,6 @@ for (j in c(1:length(full))){
   }
 }
 
-#True time (90%)
 time9 <- vector("list", length(well))
 prop9 <- vector("list", length(well))
 names(time9) <- well
@@ -375,6 +374,9 @@ names(prop9) <- well
 for (j in c(1:20)){for (i in c(1:length(well))){time9[[i]] <- c(time9[[i]],as.numeric(na.omit(full[[j]][[i]]$time)));prop9[[i]] <- c(prop9[[i]],as.numeric(full[[j]][[i]]$prptn))}}
 
 time.tab9 <- matrix(NA,ncol=5,nrow=length(well))
+
+#True time (90%)
+
 #MIN9 <- rep(NA,length(well))
 #MAX9 <- rep(NA,length(well))
 
@@ -393,7 +395,7 @@ time.tab9 <- matrix(NA,ncol=5,nrow=length(well))
 #time.tab9[,2] <- jitter(time.tab9[,2])
 
 for (i in c(1:length(well))){
-  time.tab9[i,] <- c(mean(time9[[i]]),mean(prop9[[i]]),quantile(time9[[i]],.05),(quantile(time9[[i]],.95)+quantile(time9[[i]],.05))/2,quantile(time9[[i]],.95))
+  time.tab9[i,] <- c(mean(time9[[i]]),mean(prop9[[i]]),quantile(time9[[i]],.025),(quantile(time9[[i]],.975)+quantile(time9[[i]],.025))/2,quantile(time9[[i]],.975))
 }
 
 row.names(time.tab9) <- well
@@ -407,13 +409,13 @@ time.tab9 <- cbind(time.tab9,t[,2])
 colnames(time.tab9) <- c("time","prop","LI","MI","UI","position")
 
 png(file="Time.png")
-plotCI(time.tab9[,1],time.tab9[,6],ui=time.tab9[,5],li=time.tab9[,3],xlim=c(-60,650),ylim=c(0.38,0.82),err="x",xlab="Time (Min)",ylab="Proportion",main=NA,pch=NA,gap=0,axes=FALSE)
+plotCI(time.tab9[,1],time.tab9[,6],ui=time.tab9[,5],li=time.tab9[,3],xlim=c(-60,1200),ylim=c(0.38,0.82),err="x",xlab="Time (Min)",ylab="Proportion",main=NA,pch=NA,gap=0,axes=FALSE)
 points(time.tab9[,1],time.tab9[,6],pch=16,col=2)
 for (i in c(1:length(well)))
   {
   text(x=time.tab9[,4][i],y=time.tab9[,6][i]+.008,labels=row.names(time.tab9)[i])
 }
-x.labels<-c(0,100,200,300,400,500,600)
+x.labels<-c(0,200,400,600,800,1000,1200)
 axis(side = 1, at = x.labels)
 y.labels<-round(time.tab9[,6],3)
 axis(side = 2, at = y.labels,labels=FALSE,pos=-20)
@@ -434,22 +436,48 @@ for (i in c(1:(length(well)-1))){if (as.numeric(t[,2][i+1])-as.numeric(t[,2][i])
 
 time.tab9 <- cbind(time.tab9,t[,2])
 colnames(time.tab9) <- c("time","prop","LI","MI","UI","position")
-time.tab9[8,5] <- time.tab9[8,5]-670
+
+#Way #1
+#time.tab9[8,5] <- time.tab9[8,5]-600
+
+#way #2
+time.tab9[8,5] <- time.tab9[8,5]-500
+
 time.tab9[8,4] <- (time.tab9[8,5]+time.tab9[8,3])/2
 
-png(file="Time2.png")
-plotCI(time.tab9[,1],time.tab9[,6],ui=time.tab9[,5],li=time.tab9[,3],xlim=c(-60,550),ylim=c(0.38,0.82),err="x",xlab="Time (Min)",ylab="Proportion",main=NA,pch=NA,gap=0,axes=FALSE)
+#Way #1
+#png(file="Time2_1.png")
+#plotCI(time.tab9[,1],time.tab9[,6],ui=time.tab9[,5],li=time.tab9[,3],xlim=c(-60,550),ylim=c(0.38,0.82),err="x",xlab="Time (Min)",ylab="Proportion",main=NA,pch=NA,gap=0,axes=FALSE)
+#points(time.tab9[,1],time.tab9[,6],pch=16,col=2)
+#points(c(350,350+50/4,350+3*(50/4),400),c(.38,.39,.37,.38),type="l")
+#for (i in c(1:length(well)))
+#  {
+#  text(x=time.tab9[,4][i],y=time.tab9[,6][i]+.008,labels=row.names(time.tab9)[i])
+#}
+#x.labels1<-c(0,100,200,300,350)
+#x.labels2<-c(400,500)
+#axis(side = 1, at = x.labels1,labels=FALSE,pos=.38)
+#axis(side = 1, at = x.labels2,labels=FALSE,pos=.38)
+#mtext(at=c(0,100,200,300,400,500), line=-25.3, text=c(0,100,200,300,1000,1100),cex = 1)
+#y.labels<-round(time.tab9[,6],3)
+#axis(side = 2, at = y.labels,labels=FALSE,pos=-20)
+#text(-60, time.tab9[,6], paste(round(time.tab9[,2],3)),cex = .8)
+#dev.off()
+
+#Way #2
+png(file="Time2_2.png")
+plotCI(time.tab9[,1],time.tab9[,6],ui=time.tab9[,5],li=time.tab9[,3],xlim=c(-60,650),ylim=c(0.38,0.82),err="x",xlab="Time (Min)",ylab="Proportion",main=NA,pch=NA,gap=0,axes=FALSE)
 points(time.tab9[,1],time.tab9[,6],pch=16,col=2)
-points(c(300,300+50/4,300+3*(50/4),350),c(.38,.39,.37,.38),type="l")
+points(c(400,400+100/4,400+3*(100/4),500),c(.38,.39,.37,.38),type="l")
 for (i in c(1:length(well)))
   {
   text(x=time.tab9[,4][i],y=time.tab9[,6][i]+.008,labels=row.names(time.tab9)[i])
 }
-x.labels1<-c(0,100,200,300)
-x.labels2<-c(350,450,550)
+x.labels1<-c(0,100,200,300,400)
+x.labels2<-c(500,600)
 axis(side = 1, at = x.labels1,labels=FALSE,pos=.38)
 axis(side = 1, at = x.labels2,labels=FALSE,pos=.38)
-mtext(at=c(0,100,200,300,350,450,550), line=-25.3, text=c(0,100,200,300,1000,1100,1200),cex = 1)
+mtext(at=c(0,100,200,300,400,500,600), line=-25.3, text=c(0,100,200,300,400,1000,1100),cex = 1)
 y.labels<-round(time.tab9[,6],3)
 axis(side = 2, at = y.labels,labels=FALSE,pos=-20)
 text(-60, time.tab9[,6], paste(round(time.tab9[,2],3)),cex = .8)
