@@ -402,189 +402,15 @@ for (i in c(1:length(well))){
 
 
 \begin{center}
-\setkeys{Gin}{width=.23\textwidth}
+\setkeys{Gin}{width=.49\textwidth}
 {\fs
-<<contourspg, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 1
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contourRcgmin, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 2
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contourRvmmin, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 3
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contourbobyqa, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 4
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contourL-BFGS-B, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 5
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contournlminb, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 6
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contourucminf, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
+<<contourucminf, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
 j <- 7
 filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
       		plot.axes={
                   axis(side = 1, at = x.labels,labels=x.labels)
                   axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
 
 #First start value
 for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
@@ -605,15 +431,44 @@ for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
                )
 @
 }
-\setkeys{Gin}{width=.23\textwidth}
+\setkeys{Gin}{width=.49\textwidth}
 {\fs
-<<contourN-M, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
+<<contournlminb, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 6
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourN-M, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
 j <- 8
 filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
       		plot.axes={
                   axis(side = 1, at = x.labels,labels=x.labels)
                   axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
 
 #First start value
 for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
@@ -634,102 +489,247 @@ for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
                )
 @
 }
-\setkeys{Gin}{width=.23\textwidth}
+\setkeys{Gin}{width=.49\textwidth}
 {\fs
-<<contournlm, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 9
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contourCG, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 10
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contourBFGS, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
-j <- 11
-filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
-      		plot.axes={
-                  axis(side = 1, at = x.labels,labels=x.labels)
-                  axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
-
-#First start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
-}
-
-#Path
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
-}
-
-#End start value
-for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
-    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
-  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
-}
-                      }
-               )
-@
-}
-\setkeys{Gin}{width=.23\textwidth}
-{\fs
-<<contournewuoa, echo=FALSE, fig=TRUE, eps = FALSE, height=4, width=4>>=
+<<contournewuoa, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
 j <- 12
 filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
       		plot.axes={
                   axis(side = 1, at = x.labels,labels=x.labels)
                   axis(side = 2, at = y.labels,labels=y.labels)
-            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=2)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourspg, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 1
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourRcgmin, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 2
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourbobyqa, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 4
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contournlm, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 9
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourRvmmin, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 3
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourL-BFGS-B, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 5
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourCG, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 10
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
+
+#First start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[1],l[[j]][[2]][[i]][[1]]$sigma[1],col="black",pch=1,cex=1.5,lwd=2)
+}
+
+#Path
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+  points(na.omit(l[[j]][[2]][[i]][[1]]$sqrt.alpha),na.omit(l[[j]][[2]][[i]][[1]]$sigma),col="black",type="l",lwd=2)
+}
+
+#End start value
+for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
+    points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="white",pch=20,cex=1.25,lwd=2)
+  points(l[[j]][[2]][[i]][[1]]$sqrt.alpha[length(l[[j]][[2]][[i]][[1]]$sqrt.alpha)],l[[j]][[2]][[i]][[1]]$sigma[length(l[[j]][[2]][[i]][[1]]$sigma)],col="black",pch=1,cex=1.5,lwd=2)
+}
+                      }
+               )
+@
+}
+\setkeys{Gin}{width=.49\textwidth}
+{\fs
+<<contourBFGS, echo=FALSE, fig=TRUE, eps = FALSE, height=5, width=5>>=
+j <- 11
+filled.contour2(x1range,x2range,res,levels=lev,col=cols,axes=FALSE,
+      		plot.axes={
+                  axis(side = 1, at = x.labels,labels=x.labels)
+                  axis(side = 2, at = y.labels,labels=y.labels)
+            plot.title=title(xlab="sqrt.alpha", ylab="sigma",main=paste(well[j]),cex.main=1.5)
 
 #First start value
 for (i in c(1:length(l[[j]][[2]]))[c(2,18,22,25)]){
